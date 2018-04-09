@@ -43,7 +43,7 @@ app.main = {
         //bind update to constant frame updates
         this.animationID = requestAnimationFrame(this.myUpdate);
 
-        //example of moving camera before drawing everything
+        //only update the current gamestate
         switch(this.currentGameState){
             case this.gameState.START:
                 break;
@@ -51,6 +51,7 @@ app.main = {
                 break;
             case this.gameState.GAME:
                 this.ctx.save();
+                //move canvas to camera position
                 this.ctx.translate(
                     -this.cameraPosition.x + app.main.WIDTH / 2,
                     -this.cameraPosition.y + app.main.HEIGHT / 2

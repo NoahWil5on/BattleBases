@@ -1,16 +1,19 @@
+//default construtor, doesn't do much, all code in constructor must 
+//be copy pasted (omit throw error) to any new objects using the 
+//game object class
 function gameObject(image, position){
     throw new Error("Can't instantiate abstract class");
     this.image = image;
     this.width = image.width;
     this.height = image.height;
-    this.position = position;   
-    this.rotation = 0;  
+    this.position = position;
 };
-gameObject.prototype.draw = function(ctx,rot){
+gameObject.prototype.draw = function(ctx){
     ctx.save();
 
-    rot = rot || 0;
-    rot = (rot * Math.PI) / 180;
+    //not all objects will have rotation, if not then set rotation to 0
+    var rot = this.rotation || 0;           
+    rot = (this.rotation * Math.PI) / 180;  //convert rotation to radians
 
     ctx.rotate(rot);
     ctx.translate(this.position.x, this.position.y )
