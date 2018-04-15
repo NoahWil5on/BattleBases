@@ -3,9 +3,10 @@
 //game object class
 function gameObject(image, position){
     throw new Error("Can't instantiate abstract class");
-    this.image = image;
-    this.width = image.width;
-    this.height = image.height;
+    this.imageNum = image;
+    this.image = getGeneralObject(this.imageNum);
+    this.width = this.image.width;
+    this.height = this.image.height;
     this.position = position;
 };
 gameObject.prototype.draw = function(ctx, flip){

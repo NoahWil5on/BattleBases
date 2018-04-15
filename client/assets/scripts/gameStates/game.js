@@ -4,6 +4,7 @@ var app = app || {};
 
 app.game = {
     myCharacters: [],
+    enemyCharacters: [],
     myBase: undefined,
     enemyBase: undefined,
     makeCharacterButton: undefined,
@@ -16,12 +17,12 @@ app.game = {
             y: 100}; 
         var enemyBasePos = JSON.parse(JSON.stringify(basePos));
         this.myBase = new baseObject(
-            base,
+            'base',
             basePos,
             .5
         );
         this.enemyBase = new baseObject(
-            base,
+            'base',
             basePos,
             .5
         )
@@ -35,7 +36,7 @@ app.game = {
             y: (button.height / 2) * .1}; 
 
 		this.makeCharacterButton = new buttonObject (
-			button,		//image
+			'01',		//image
             charButtonPos,
             .1);	                //position
     },
@@ -47,6 +48,7 @@ app.game = {
         if(app.main.host){
             this.updateCollisions();
         }
+        sendMyData();
     },
     updateCharacters: function(dt){
         for(var i = 0; i < this.myCharacters.length; i++){
@@ -58,7 +60,7 @@ app.game = {
             var charPos = JSON.parse(JSON.stringify(this.myBase.position))
             charPos.y += 20;
             this.myCharacters.push(new characterObject(
-                getCharacter("01"),     
+                '01',     
                 charPos,          
                 100,
                 .15
@@ -74,15 +76,39 @@ app.game = {
         //enemy turret bullets vs my players
     },
     draw: function(ctx){
-        this.drawCharacter(ctx);
+        this.drawCharacters(ctx);
 
         this.myBase.draw(ctx);
         this.enemyBase.draw(ctx, true);
     },
-    drawCharacter: function(ctx){
+    drawCharacters: function(ctx){
         for(var i = 0; i < this.myCharacters.length; i++){
             this.myCharacters[i].draw(ctx);
         }
+        for(var i = 0; i < this.enemyCharacters.length; i++){
+            this.drawEnemy(this.enemyCharacters[i], ctx);
+        }
+    },
+    drawEnemy: function(obj, ctx){
+        ctx.save();
+
+        //not all objects will have rotation, if not then set rotation to 0
+        var rot = obj.rotation || 0;        
+        var scale = obj.scale || 1;   
+        var swap = -1;
+        rot = (obj.rotation * Math.PI) / 180;  //convert rotation to radians
+
+        ctx.rotate(rot);
+        ctx.scale(scale * swap,scale);
+        ctx.translate(obj.position.x / scale, obj.position.y / scale )
+
+        ctx.drawImage(
+            getCharacter(obj.imageNum),
+            -(obj.width / 2),
+            -(obj.height / 2)
+        );
+
+        ctx.restore();
     },
 	drawUI: function(ctx) {
 		this.makeCharacterButton.draw(ctx); //draw the button used to make our character

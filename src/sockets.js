@@ -26,6 +26,9 @@ const onMessage = (sock) => {
   socket.on('startGame', (data) => {
     socket.broadcast.to(`room${socket.room}`).emit('startGame', {});
   });
+  socket.on('updatePlayerInfo', (data) => {
+    socket.broadcast.to(`room${socket.room}`).emit('updatePlayerInfo', data);
+  });
 };
 const onDisconnect = (sock) => {
   const socket = sock;

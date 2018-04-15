@@ -18,6 +18,12 @@ function joinServer(){
     socket.on('startGame', () => {
         app.main.currentGameState = app.main.gameState.GAME
     });
+    socket.on('updatePlayerInfo', (data) => {
+        app.game.enemyCharacters = data.characters;
+    })
+}
+function sendMyData(){
+    socket.emit('updatePlayerInfo', {characters: app.game.myCharacters});
 }
 function init(){
     app.main.init();
