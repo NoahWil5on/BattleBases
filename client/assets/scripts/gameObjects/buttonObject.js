@@ -1,12 +1,13 @@
 //character constructor
 //image and speed are required
-function buttonObject(image, position){
+function buttonObject(image, position, scale){
     if(arguments.length < 2) 
         throw new Error("Image and Position are necessary to make character");
     this.image = image;
     this.width = image.width;
     this.height = image.height;
     this.position = position;
+    this.scale = scale || 1;
 	this.isClicked = false;
 }
 buttonObject.prototype = Object.create(gameObject.prototype);
@@ -15,16 +16,34 @@ buttonObject.prototype = Object.create(gameObject.prototype);
 buttonObject.prototype.update = function(funcToCall, para){
     funcToCall(para);
 }
+buttonObject.prototype.hover = function(correctPosition){
+    let pos = this.position
+    let scale = this.scale || 1;
+    if(correctPosition){
+        pos = {
+            x: (this.position.x - ((this.width / 2) * scale)),
+            y: (this.position.y - ((this.height / 2) * scale))
+        }
+    }
+    let buttonRect = {
+        width: this.width * scale,
+        height: this.height * scale,
+        pos: pos
+    };
+    if(pointInRect(app.main.mouse,buttonRect)) 
+    {
+        app.main.canvas.style.cursor = 'pointer';
+        return true;
+    }
+    return false;
+}
 //pass in mouse coordinates
-buttonObject.prototype.clicked = function(coords){
-	//Do simple check if the click is on our button
-    if (coords.x > this.position.x &&
-		coords.x < this.position.x + this.width/2 &&
-		coords.y > this.position.y &&
-		coords.y < this.position.y + this.height/2) {
-		//in our button, so set isClicked to true
-		this.isClicked = true;		
-	} else {
-		this.isClicked = false;
-	}
+buttonObject.prototype.clicked = function(correctPosition){
+    if(!this.hover(correctPosition)){
+        return false;
+    }
+    if(app.main.mouseDown){
+        return true;
+    }
+    return false;
 }

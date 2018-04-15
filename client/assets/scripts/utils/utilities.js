@@ -59,17 +59,17 @@ function RectRectCollision(box1, box2){
     return false;
 }
 //returns mouse position ov given element
-function getMousePos(canvas, evt) {
+function getMousePos(canvas, event) {
     var rect = canvas.getBoundingClientRect();
     return {
-      x: evt.clientX - rect.left,
-      y: evt.clientY - rect.top
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
     };
 }
 //check if a given point is in a given rectangle
 function pointInRect(point, rect){
-    if(point.x > rect.x && point.x < rect.x + rect.width){
-        if(point.y > rect.y && point.y < rect.y + rect.height) return true;
+    if(point.x > rect.pos.x && point.x < rect.pos.x + rect.width){
+        if(point.y > rect.pos.y && point.y < rect.pos.y + rect.height) return true;
     }
     return false;
 }
