@@ -3,14 +3,22 @@
 var app = app || {};
 
 app.lobby = {
-    init: function(){           
+    waiting: undefined,
+    init: function(){    
+        this.waiting = new textObject(
+            'Waiting for another player...',    //text
+            {x: app.main.WIDTH / 2,             //position
+            y: app.main.HEIGHT / 2},
+            '#000',                             //color
+            'center',                           //text align
+            'sans-serif',                       //font
+            '16'                                //size
+        );
     },
     update: function(dt, ctx){
         this.draw(ctx);
     },
     draw: function(ctx){
-		ctx.fillRect(
-            10,10,50,50
-        );
+		this.waiting.draw(ctx);
     },
 }

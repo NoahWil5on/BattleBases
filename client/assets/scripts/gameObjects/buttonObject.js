@@ -37,12 +37,20 @@ buttonObject.prototype.hover = function(correctPosition){
     }
     return false;
 }
-//pass in mouse coordinates
-buttonObject.prototype.clicked = function(correctPosition){
+buttonObject.prototype.hold = function(correctPosition){
     if(!this.hover(correctPosition)){
         return false;
     }
     if(app.main.mouseDown){
+        return true;
+    }
+    return false;
+}
+buttonObject.prototype.clicked = function(correctPosition){
+    if(!this.hover(correctPosition)){
+        return false;
+    }
+    if(app.main.clicked){
         return true;
     }
     return false;

@@ -4,3 +4,6 @@ function getCharacter(character){
 function getButton(button) {
 	return document.getElementById(`button_${button}`);
 }
+function getGeneralObject(obj){
+    return document.getElementById(obj);
+}

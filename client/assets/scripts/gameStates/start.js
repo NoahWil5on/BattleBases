@@ -26,7 +26,7 @@ app.start = {
         this.draw(ctx);
     },
     updateReadyButton: function(){
-        this.isReadyDown = this.readyButtonUp.clicked(true);
+        this.isReadyDown = this.readyButtonUp.hold(true);
         if(this.wasReadyDown && !this.isReadyDown){
             app.main.currentGameState = app.main.gameState.LOBBY;
             joinServer();

@@ -14,5 +14,5 @@ function characterObject(image, position, speed, scale){
 characterObject.prototype = Object.create(gameObject.prototype);
 characterObject.prototype.update = function(dt){
     if(!dt || dt === undefined) return;
-    this.position.x += this.speed * dt;
+    this.position.x += (this.speed) * dt;
 }

@@ -12,7 +12,8 @@ app.main = {
     HEIGHT: 600,
     dt: 0,
     lastUpdate: Date.now(),
-    cameraPosition: {x: 100, y: 0},
+    cameraPosition: {x: -100000, y: 0},
+    cameraSpeed: 200,
     gameState: {
         START: 0,
         LOBBY: 1,
@@ -21,12 +22,19 @@ app.main = {
     },
     host: false,
     currentGameState: undefined,    
+    worldSize: undefined,
     mouse: {x: 0, y: 0},
     mouseDown: false,
+    wasMouseDown: false,
+    clicked: false,
 
     //intialize fields, most imporantly reset key values to reset the game
     init: function(player){
         this.currentGameState = this.gameState.START;
+        this.worldSize = {
+            width: 1200,
+            height: 600,
+        }
 
         //setup canvas
         this.canvas = document.getElementById('canvas');
@@ -51,9 +59,19 @@ app.main = {
         window.addEventListener('mouseup', function(event) {
             app.main.mouseDown = false;
         }, false);
+
+        if(this.worldSize.width < this.WIDTH){
+            this.worldSize.width = this.WIDTH;
+        }
+        if(this.worldSize.height < this.HEIGHT){
+            this.worldSize.height = this.HEIGHT
+        }
     },
     //route update calls depending on game state and updates various things
     update: function(delta){
+        if(this.wasMouseDown && !this.mouseDown){
+            this.clicked = true;
+        }
         app.main.canvas.style.cursor = 'auto';
         this.dt = (delta -this.lastUpdate) / 1000;
         this.clear();
@@ -91,9 +109,25 @@ app.main = {
         this.ctx.restore();
 
         this.lastUpdate = delta;
+        this.wasMouseDown = this.mouseDown;
+        this.clicked = false;
     },
     cameraMove: function(){
-        
+        if(this.mouse.x < 200){
+            this.cameraPosition.x -= this.cameraSpeed * this.dt;
+        } 
+        if(this.mouse.x > this.WIDTH - 200){
+            this.cameraPosition.x += this.cameraSpeed * this.dt;
+        }
+        this.boundCamera();
+    },
+    boundCamera: function(){
+        if(this.cameraPosition.x < ((this.WIDTH / 2) - (this.worldSize.width / 2))){
+            this.cameraPosition.x = ((this.WIDTH / 2) - (this.worldSize.width / 2));
+        }
+        if(this.cameraPosition.x > ((this.worldSize.width / 2) - (this.WIDTH / 2))){
+            this.cameraPosition.x = ((this.worldSize.width / 2) - (this.WIDTH / 2));
+        }
     },
     //called once a frame to wipe canvas
     clear: function(){
