@@ -1,7 +1,7 @@
 let io;
 let num;
 
-//check how many clients are in a current room
+// check how many clients are in a current room
 const getNumClients = (room) => {
   const clients = io.nsps['/'].adapter.rooms[room];
 
@@ -16,23 +16,24 @@ const onJoined = (sock, host) => {
   const socket = sock;
   socket.join(`room${socket.room}`);
 
-  //send join message to this socket
-  socket.emit('join', {host});
-
+  // send join message to this socket
+  socket.emit('join', { host });
 };
 const onMessage = (sock) => {
   const socket = sock;
-
-  socket.on('startGame', (data) => {
+  // temporarily taken out data to pass eslint
+  socket.on('startGame', () => {
     socket.broadcast.to(`room${socket.room}`).emit('startGame', {});
   });
   socket.on('updatePlayerInfo', (data) => {
     socket.broadcast.to(`room${socket.room}`).emit('updatePlayerInfo', data);
   });
 };
+// temporarily taken out sock to pass eslint
 const onDisconnect = (sock) => {
   const socket = sock;
-
+  // Remove user from room, will need to handle what happens to other player.
+  socket.leave(socket.room);
 };
 const configure = (ioServer) => {
   io = ioServer;

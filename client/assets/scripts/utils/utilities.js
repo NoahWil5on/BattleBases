@@ -53,10 +53,21 @@ function RectRectCollision(box1, box2){
         box2.pos.x < box1.pos.x + box1.pos.width){
             if(box1.pos.y < box2.pos.y + box2.height && 
                 box2.pos.y < box1.pos.y + box1.pos.height){
-        
+                    //box1 is getting their width/height from pos. not sure if thats done on purpose*
             }
     }
     return false;
+}
+//Check if two players are colliding horizontally, * x by -1
+//currently scale width the same way we scale the images
+function HorizontalCollision(player, enemy) {
+    enemy.position.x *= -1;
+    if (player.position.x < enemy.position.x + (enemy.width * enemy.scale) &&
+        enemy.position.x < player.position.x + (player.width * player.scale)) {
+            return true;
+        } else {
+            return false;
+        }
 }
 //returns mouse position ov given element
 function getMousePos(canvas, event) {

@@ -5,6 +5,8 @@ var app = app || {};
 app.game = {
     myCharacters: [],
     enemyCharacters: [],
+    myTurretTargets: [],
+    enemyTurretTargets: [],
     myBase: undefined,
     enemyBase: undefined,
     makeCharacterButton: undefined,
@@ -74,6 +76,70 @@ app.game = {
         /********************* */
         //my turret bullets vs enemy players
         //enemy turret bullets vs my players
+        this.checkPlayerCollisions();
+        //this.checkBaseCollisions();
+        this.checkPlayersInTurretRange();
+        this.managePlayers();
+    },
+	checkPlayerCollisions: function() {
+		for (var i = 0; i < this.myCharacters.length; i++) {
+			for (var n = 0; n < this.enemyCharacters.length; n++) {
+                //myCharacters Colliding with Enemy Charcters
+				if (HorizontalCollision(this.myCharacters[i],this.enemyCharacters[n])) {
+                    this.myCharacters[i].isColliding = true;
+                    this.enemyCharacters[n].isColliding = true;
+                    console.log("characters Colliding");
+                }
+			}
+		}
+    },
+    checkBaseCollisions: function() {
+        for (var i = 0; i < this.myCharacters.length; i++) {
+            //Players colliding with enemy Base
+            if (HorizontalCollision(this.myCharacters[i], this.enemyBase)) {
+                console.log("Hey, we're killing their base");
+            }
+        }
+        for (var n = 0; n < this.enemyCharacters.length; n++) {
+            //Enemies colliding with my Base
+            if (HorizontalCollision(this.enemyCharacters[n], this.myBase)) {
+                console.log("My base is under attack!");
+            }
+        }
+    },
+    checkPlayersInTurretRange: function() {
+        for (var i = 0; i < this.myCharacters.length; i++) {
+            //My players in range of enemy turrets, and does not already exist in the Target array
+            if (this.myCharacters[i].position.x > (-this.enemyBase.position.x - 300)) {
+                console.log("Friendly in enemy turret range");
+            }
+        }
+        for (var n = 0; n < this.enemyCharacters.length; n++) {
+            if (this.enemyCharacters[n].position.x < (this.myBase.position.x + 300)) {
+                console.log("Enemy in friendly turret range");
+            }
+        }
+    },
+	checkTurretCollisions: function() {
+		
+    },
+    //currently delete characters when they get off screen
+    //will be used to handle deaths
+    managePlayers: function() {
+        for (var i = 0; i < this.myCharacters.length; i++) {
+            if (this.myCharacters[i].position.x > 800) {
+                console.log("character off screen");
+                this.myCharacters.splice(i, 1);
+                i--;
+            }
+        }
+        for (var n = 0; n < this.enemyCharacters.length; n++) {
+            if (-this.enemyCharacters[n].position.x < -800) {
+                //console.log("Enemy off screen");
+                //this.enemyCharacters.splice(n, 1);
+                //n--;
+            }
+        }
     },
     draw: function(ctx){
         this.drawCharacters(ctx);
@@ -100,7 +166,7 @@ app.game = {
 
         ctx.rotate(rot);
         ctx.scale(scale * swap,scale);
-        ctx.translate(obj.position.x / scale, obj.position.y / scale )
+        ctx.translate(obj.position.x / scale, obj.position.y / scale );
 
         ctx.drawImage(
             getCharacter(obj.imageNum),

@@ -20,10 +20,14 @@ function joinServer(){
     });
     socket.on('updatePlayerInfo', (data) => {
         app.game.enemyCharacters = data.characters;
+        //For each of these enemy characters, change their direction to -1
+        for (var i = 0; i < data.characters.length; i++) {
+            app.game.enemyCharacters[i].direction = -1;
+        }
     })
 }
 function sendMyData(){
-    socket.emit('updatePlayerInfo', {characters: app.game.myCharacters});
+    socket.emit('updatePlayerInfo', {characters: app.game.myCharacters, enemies: app.game.myEnemies});
 }
 function init(){
     app.main.init();
