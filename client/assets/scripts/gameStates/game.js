@@ -40,7 +40,7 @@ app.game = {
 		this.makeCharacterButton = new buttonObject (
 			'01',		//image
             charButtonPos,
-            .1);	                //position
+            .1);	    //position
     },
     update: function(dt, ctx){
         this.updateCharacters(dt);
@@ -115,7 +115,7 @@ app.game = {
             }
         }
         for (var n = 0; n < this.enemyCharacters.length; n++) {
-            if (this.enemyCharacters[n].position.x < (this.myBase.position.x + 300)) {
+            if (-this.enemyCharacters[n].position.x < (this.myBase.position.x + 300)) {
                 console.log("Enemy in friendly turret range");
             }
         }
@@ -136,8 +136,9 @@ app.game = {
         for (var n = 0; n < this.enemyCharacters.length; n++) {
             if (-this.enemyCharacters[n].position.x < -800) {
                 //console.log("Enemy off screen");
-                //this.enemyCharacters.splice(n, 1);
-                //n--;
+                this.enemyCharacters.splice(n, 1);
+                n--;
+                //doesnt work because enemies are updated from other client
             }
         }
     },

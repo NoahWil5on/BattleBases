@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\assets",
+    "\\assets\\scripts",
+    "\\assets\\scripts\\gameObjects",
+    "\\assets\\scripts\\gameStates",
+    "\\assets\\scripts\\utils"
+  ],
+  "SelectedNode": "\\assets\\scripts\\gameStates\\game.js",
+  "PreviewInSolutionExplorer": false
+}
