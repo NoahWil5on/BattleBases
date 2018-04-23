@@ -28,6 +28,12 @@ const onMessage = (sock) => {
   socket.on('updatePlayerInfo', (data) => {
     socket.broadcast.to(`room${socket.room}`).emit('updatePlayerInfo', data);
   });
+  socket.on('createNewEnemyForHost', () => {
+    socket.broadcast.to(`room${socket.room}`).emit('createNewEnemyForHost', {});
+  });
+  socket.on('updateEnemiesCharacterList', (data) => {
+    socket.broadcast.to(`room${socket.room}`).emit('updateEnemiesCharacterList', data);
+  });
 };
 // temporarily taken out sock to pass eslint
 const onDisconnect = (sock) => {

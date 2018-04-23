@@ -14,6 +14,10 @@ function joinServer(){
             app.main.currentGameState = app.main.gameState.GAME;
             socket.emit('startGame', {});
         }
+        //have host update character every 20ms
+        if (app.main.host) {
+            setInterval(sendCharacterList, 20);
+        }
     });
     socket.on('startGame', () => {
         app.main.currentGameState = app.main.gameState.GAME
@@ -24,10 +28,25 @@ function joinServer(){
         for (var i = 0; i < data.characters.length; i++) {
             app.game.enemyCharacters[i].direction = -1;
         }
-    })
+    });
+    socket.on('createNewEnemyForHost', () => {
+        //negative because base needs to be flipped?
+        var charPos = JSON.parse(JSON.stringify(app.game.enemyBase.position))
+        charPos.y += 20;
+        app.game.enemyCharacters.push(new characterObject(
+            '01',
+            charPos,
+            100,
+            .15,
+            -1
+        ));
+    });
 }
-function sendMyData(){
-    socket.emit('updatePlayerInfo', {characters: app.game.myCharacters, enemies: app.game.myEnemies});
+function sendHostNewCharacter(){
+    socket.emit('createNewEnemyForHost');
+}
+function sendCharacterList() {
+    console.log("interval");
 }
 function init(){
     app.main.init();

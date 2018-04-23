@@ -41,6 +41,7 @@ app.game = {
 			'01',		//image
             charButtonPos,
             .1);	    //position
+
     },
     update: function(dt, ctx){
         this.updateCharacters(dt);
@@ -50,23 +51,37 @@ app.game = {
         if(app.main.host){
             this.updateCollisions();
         }
-        sendMyData();
+        //sendMyData();
     },
     updateCharacters: function(dt){
         for(var i = 0; i < this.myCharacters.length; i++){
             this.myCharacters[i].update(dt);
         }
+        //if enemy characters exist
+        if (typeof enemyCharacters != 'undefined') {
+            for (var i = 0; i < this.enemyCharacters.length; i++) {
+                this.enemyCharacters[i].update(dt);
+            }
+        }
     },
     updateButtons: function(){
-        if(this.makeCharacterButton.clicked(true)){
-            var charPos = JSON.parse(JSON.stringify(this.myBase.position))
-            charPos.y += 20;
-            this.myCharacters.push(new characterObject(
-                '01',     
-                charPos,          
-                100,
-                .15
-            ));
+        if (this.makeCharacterButton.clicked(true)) {
+            if (app.main.host) {
+                var charPos = JSON.parse(JSON.stringify(this.myBase.position))
+                charPos.y += 20;
+                this.myCharacters.push(new characterObject(
+                    '01',
+                    charPos,
+                    100,
+                    .15,
+                    1
+                ));
+            } else {
+                //theyre the other player, 
+                //emit an enemy created to the host
+                sendHostNewCharacter();
+            }
+
         }
     },
     updateCollisions: function(){
@@ -80,6 +95,7 @@ app.game = {
         //this.checkBaseCollisions();
         this.checkPlayersInTurretRange();
         this.managePlayers();
+        //emit new list to other client
     },
 	checkPlayerCollisions: function() {
 		for (var i = 0; i < this.myCharacters.length; i++) {
@@ -152,8 +168,9 @@ app.game = {
         for(var i = 0; i < this.myCharacters.length; i++){
             this.myCharacters[i].draw(ctx);
         }
-        for(var i = 0; i < this.enemyCharacters.length; i++){
-            this.drawEnemy(this.enemyCharacters[i], ctx);
+        for (var i = 0; i < this.enemyCharacters.length; i++){
+            this.enemyCharacters[i].draw(ctx);
+            //this.drawEnemy(this.enemyCharacters[i], ctx);
         }
     },
     drawEnemy: function(obj, ctx){

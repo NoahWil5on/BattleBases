@@ -61,7 +61,7 @@ function RectRectCollision(box1, box2){
 //Check if two players are colliding horizontally, * x by -1
 //currently scale width the same way we scale the images
 function HorizontalCollision(player, enemy) {
-    enemy.position.x *= -1;
+    //enemy.position.x *= -1;
     if (player.position.x < enemy.position.x + (enemy.width * enemy.scale) &&
         enemy.position.x < player.position.x + (player.width * player.scale)) {
             return true;
