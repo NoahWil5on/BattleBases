@@ -20,8 +20,9 @@ gameObject.prototype.draw = function(ctx, flip){
     rot = (this.rotation * Math.PI) / 180;  //convert rotation to radians
 
     ctx.rotate(rot);
-    ctx.scale(scale * swap,scale);
-    ctx.translate(this.position.x / scale, this.position.y / scale )
+    ctx.scale(scale * swap, scale);
+    //flip them back lol
+    ctx.translate(this.position.x / (scale * swap), this.position.y / (scale * swap));
 
     ctx.drawImage(
         this.image,

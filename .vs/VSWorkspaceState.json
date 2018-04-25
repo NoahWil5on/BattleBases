@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\client",
+    "\\client\\assets",
+    "\\client\\assets\\scripts",
+    "\\client\\assets\\scripts\\gameObjects",
+    "\\client\\assets\\scripts\\gameStates",
+    "\\client\\assets\\scripts\\utils",
+    "\\src"
+  ],
+  "SelectedNode": "\\client\\assets\\scripts\\utils\\socket.js",
+  "PreviewInSolutionExplorer": false
+}

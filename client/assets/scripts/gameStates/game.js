@@ -16,8 +16,13 @@ app.game = {
         var base = getGeneralObject('base');
         var basePos = {
             x: ((base.width / 2) * .5) - (app.main.worldSize.width / 2),
-            y: 100}; 
-        var enemyBasePos = JSON.parse(JSON.stringify(basePos));
+            y: 100
+        };
+        var enemyBasePos = {
+            x: ((((base.width / 2) * .5) - (app.main.worldSize.width / 2)) / -1),
+            y: -100}; 
+       // enemyBasePos.x *= -1;
+        console.log(enemyBasePos);
         this.myBase = new baseObject(
             'base',
             basePos,
@@ -25,7 +30,7 @@ app.game = {
         );
         this.enemyBase = new baseObject(
             'base',
-            basePos,
+            enemyBasePos,
             .5
         )
 
@@ -41,6 +46,7 @@ app.game = {
 			'01',		//image
             charButtonPos,
             .1);	    //position
+
     },
     update: function(dt, ctx){
         this.updateCharacters(dt);
@@ -50,23 +56,37 @@ app.game = {
         if(app.main.host){
             this.updateCollisions();
         }
-        sendMyData();
+        //sendMyData();
     },
     updateCharacters: function(dt){
         for(var i = 0; i < this.myCharacters.length; i++){
             this.myCharacters[i].update(dt);
         }
+
+        for (var i = 0; i < this.enemyCharacters.length; i++) {
+            this.enemyCharacters[i].update(dt);
+        }
+
+        //console.log(this.enemyCharacters);
     },
     updateButtons: function(){
-        if(this.makeCharacterButton.clicked(true)){
-            var charPos = JSON.parse(JSON.stringify(this.myBase.position))
-            charPos.y += 20;
-            this.myCharacters.push(new characterObject(
-                '01',     
-                charPos,          
-                100,
-                .15
-            ));
+        if (this.makeCharacterButton.clicked(true)) {
+            if (app.main.host) {
+                var charPos = JSON.parse(JSON.stringify(this.myBase.position))
+                charPos.y += 20;
+                this.myCharacters.push(new characterObject(
+                    '01',
+                    charPos,
+                    100,
+                    .15,
+                    1
+                ));
+            } else {
+                //theyre the other player, 
+                //emit an enemy created to the host
+                sendHostNewCharacter();
+            }
+
         }
     },
     updateCollisions: function(){
@@ -77,9 +97,10 @@ app.game = {
         //my turret bullets vs enemy players
         //enemy turret bullets vs my players
         this.checkPlayerCollisions();
-        //this.checkBaseCollisions();
+        this.checkBaseCollisions();
         this.checkPlayersInTurretRange();
         this.managePlayers();
+        //emit new list to other client
     },
 	checkPlayerCollisions: function() {
 		for (var i = 0; i < this.myCharacters.length; i++) {
@@ -88,7 +109,13 @@ app.game = {
 				if (HorizontalCollision(this.myCharacters[i],this.enemyCharacters[n])) {
                     this.myCharacters[i].isColliding = true;
                     this.enemyCharacters[n].isColliding = true;
-                    console.log("characters Colliding");
+
+                    //Kill them for now.
+                    this.myCharacters.splice(i, 1);
+                    i--;
+                    //Kill them for now.
+                    this.enemyCharacters.splice(i, 1);
+                    i--;
                 }
 			}
 		}
@@ -98,24 +125,31 @@ app.game = {
             //Players colliding with enemy Base
             if (HorizontalCollision(this.myCharacters[i], this.enemyBase)) {
                 console.log("Hey, we're killing their base");
+                //for now, just kill the character and do some damage to the base
+                this.enemyBase.takeDamage(this.myCharacters[i].attack);
+                this.myCharacters.splice(i, 1);
+                i--;
             }
         }
         for (var n = 0; n < this.enemyCharacters.length; n++) {
             //Enemies colliding with my Base
             if (HorizontalCollision(this.enemyCharacters[n], this.myBase)) {
                 console.log("My base is under attack!");
+                this.myBase.takeDamage(this.enemyCharacters[i].attack);
+                this.enemyCharacters.splice(n, 1);
+                n--;
             }
         }
     },
     checkPlayersInTurretRange: function() {
         for (var i = 0; i < this.myCharacters.length; i++) {
             //My players in range of enemy turrets, and does not already exist in the Target array
-            if (this.myCharacters[i].position.x > (-this.enemyBase.position.x - 300)) {
+            if (this.myCharacters[i].position.x > (this.enemyBase.position.x - 300)) {
                 console.log("Friendly in enemy turret range");
             }
         }
         for (var n = 0; n < this.enemyCharacters.length; n++) {
-            if (-this.enemyCharacters[n].position.x < (this.myBase.position.x + 300)) {
+            if (this.enemyCharacters[n].position.x < (this.myBase.position.x + 300)) {
                 console.log("Enemy in friendly turret range");
             }
         }
@@ -147,13 +181,17 @@ app.game = {
 
         this.myBase.draw(ctx);
         this.enemyBase.draw(ctx, true);
+
+        this.myBase.drawHealth(ctx);
+        this.enemyBase.drawHealth(ctx);
     },
     drawCharacters: function(ctx){
         for(var i = 0; i < this.myCharacters.length; i++){
             this.myCharacters[i].draw(ctx);
         }
-        for(var i = 0; i < this.enemyCharacters.length; i++){
-            this.drawEnemy(this.enemyCharacters[i], ctx);
+        for (var i = 0; i < this.enemyCharacters.length; i++){
+            this.enemyCharacters[i].draw(ctx, true);
+            //this.drawEnemy(this.enemyCharacters[i], ctx);
         }
     },
     drawEnemy: function(obj, ctx){

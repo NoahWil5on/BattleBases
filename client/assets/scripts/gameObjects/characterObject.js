@@ -1,4 +1,4 @@
-function characterObject(image, position, speed, scale){
+function characterObject(image, position, speed, scale, direction){
     this.imageNum = image;
     this.image = getCharacter(this.imageNum);
     this.width = this.image.width;
@@ -6,9 +6,9 @@ function characterObject(image, position, speed, scale){
     this.position = position;  
     this.rotation = 0;
     this.speed = speed || 0;
-    this.direction = 1;   
+    this.direction = direction || 1;   
     this.scale = scale || 1;
-    this.id = `${Date.now()}`
+    this.id = `${Date.now()}`;
     this.isColliding = false;
     this.attack = 10;
 }
