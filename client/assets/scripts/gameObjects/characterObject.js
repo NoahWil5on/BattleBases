@@ -1,4 +1,4 @@
-function characterObject(image, position, speed, scale, direction){
+function characterObject(image, position, speed, health, damage, scale, direction){
     this.imageNum = image;
     this.image = getCharacter(this.imageNum);
     this.imageWidth = this.image.width;
@@ -12,7 +12,8 @@ function characterObject(image, position, speed, scale, direction){
     this.scale = scale || 1;
     this.id = `${Date.now()}`;
     this.isColliding = false;
-    this.attack = 10;
+    this.damage = damage || 10;
+    this.health = health;
 }
 characterObject.prototype = Object.create(gameObject.prototype);
 characterObject.prototype.update = function(dt){

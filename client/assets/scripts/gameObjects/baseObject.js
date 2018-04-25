@@ -16,11 +16,6 @@ baseObject.prototype.takeDamage = function(damage){
 	//If the character is colliding with another character, he shouldnt move.
     if(!damage || damage === undefined) return;
     this.health -= damage;
-
-    //End game if players health drops below 0
-    if (this.health <= 0) {
-        app.main.currentGameState = app.main.gameState.OVER;
-    }
 }
 baseObject.prototype.AddTurret = function () {
     this.turretCount++;

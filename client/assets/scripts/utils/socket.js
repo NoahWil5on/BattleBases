@@ -38,6 +38,8 @@ function joinServer(){
             '01',
             charPos,
             100,
+            20, //health
+            10, //damage
             .15,
             -1
         ));
@@ -46,12 +48,24 @@ function joinServer(){
     });
 
     socket.on('updateNonHost', (data) => {
-        console.dir(data);
         app.game.myCharacters = data.myCharacters;
         app.game.enemyCharacters = data.enemies;
         app.game.myBase.health = data.myHealth;
         app.game.enemyBase.health = data.enemyHealth;
+        app.game.myTurret.rotation = data.myTurretRotation;
+        app.game.enemyTurret.rotation = data.enemyTurretRotation;
+        app.game.myBullets = data.myBullets;
+        app.game.enemyBullets = data.enemyBullets;
     });
+    socket.on('gameOver', (data) => {
+        app.over.win = data.win;
+        app.main.currentGameState = app.main.gameState.OVER;
+    })
+}
+function sendOver(win){
+    socket.emit('gameOver', {win: win});
+    app.over.win = !win;
+    app.main.currentGameState = app.main.gameState.OVER;
 }
 function sendHostNewCharacter(){
     socket.emit('createNewEnemyForHost');
@@ -63,7 +77,11 @@ function sendCharacterList() {
         enemies: app.game.myCharacters,
         myCharacters: app.game.enemyCharacters,
         myHealth: app.game.enemyBase.health,
-        enemyHealth: app.game.myBase.health
+        enemyHealth: app.game.myBase.health,
+        myBullets: app.game.enemyTurret.bullets,
+        myTurretRotation: app.game.enemyTurret.rotation,
+        enemyBullets: app.game.myTurret.bullets,
+        enemyTurretRotation: app.game.myTurret.rotation
     }));
 }
 

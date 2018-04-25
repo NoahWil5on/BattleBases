@@ -47,6 +47,16 @@ function CircleCircleCollision(ball1, ball2){
     if(difference < (ball1.rad + ball2.rad)) return true;
     return false;
 }
+function magnitude(vec2){
+    return Math.sqrt(Math.pow(vec2.x, 2) + Math.pow(vec2.y, 2));
+}
+function normal(vec2){
+    var mag = magnitude(vec2);
+    return {
+        x: vec2.x / mag,
+        y: vec2.y / mag
+    }
+}
 //checks if two boxes are colliding
 function RectRectCollision(box1, box2){
     if(box1.pos.x < box2.pos.x + box2.width && 
