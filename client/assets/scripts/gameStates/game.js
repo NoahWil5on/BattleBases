@@ -57,12 +57,12 @@ app.game = {
         for(var i = 0; i < this.myCharacters.length; i++){
             this.myCharacters[i].update(dt);
         }
-        //if enemy characters exist
-        if (typeof enemyCharacters != 'undefined') {
-            for (var i = 0; i < this.enemyCharacters.length; i++) {
-                this.enemyCharacters[i].update(dt);
-            }
+
+        for (var i = 0; i < this.enemyCharacters.length; i++) {
+            this.enemyCharacters[i].update(dt);
         }
+
+        console.log(this.enemyCharacters);
     },
     updateButtons: function(){
         if (this.makeCharacterButton.clicked(true)) {

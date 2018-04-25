@@ -16,7 +16,8 @@ function joinServer(){
         }
         //have host update character every 20ms
         if (app.main.host) {
-            setInterval(sendCharacterList, 20);
+            console.log("HOST");
+            setInterval(sendCharacterList, 1000);
         }
     });
     socket.on('startGame', () => {
@@ -30,6 +31,7 @@ function joinServer(){
         }
     });
     socket.on('createNewEnemyForHost', () => {
+        console.log("new enemy created");
         //negative because base needs to be flipped?
         var charPos = JSON.parse(JSON.stringify(app.game.enemyBase.position))
         charPos.y += 20;
@@ -40,13 +42,26 @@ function joinServer(){
             .15,
             -1
         ));
+
+        //console.log(app.game.enemyCharacters);
+    });
+
+    socket.on('updateEnemiesCharacterList', (data) => {
+        //console.log(data.enemies);
+        app.main.myCharacters = data.myCharacters;
+        app.main.enemyCharacters = data.enemies;
     });
 }
 function sendHostNewCharacter(){
     socket.emit('createNewEnemyForHost');
 }
 function sendCharacterList() {
-    console.log("interval");
+    //Send the new list every 20 ms, flipping the characters
+    //console.log(app.game.myCharacters);
+    socket.emit('updateEnemiesCharacterList', ({
+        enemies: app.game.myCharacters,
+        myCharacters: app.game.enemyCharacters
+    }));
 }
 function init(){
     app.main.init();
