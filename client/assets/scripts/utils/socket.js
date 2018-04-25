@@ -31,7 +31,6 @@ function joinServer(){
         }
     });
     socket.on('createNewEnemyForHost', () => {
-        console.log("new enemy created");
         //negative because base needs to be flipped?
         var charPos = JSON.parse(JSON.stringify(app.game.enemyBase.position))
         charPos.y += 20;
@@ -47,7 +46,8 @@ function joinServer(){
     });
 
     socket.on('updateEnemiesCharacterList', (data) => {
-        //console.log(data.enemies);
+        //console.log("Enemies: " + data.enemies);
+        //console.log("My Characters:" + data.myCharacters)
         app.main.myCharacters = data.myCharacters;
         app.main.enemyCharacters = data.enemies;
     });
