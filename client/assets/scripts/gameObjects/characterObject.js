@@ -1,8 +1,10 @@
 function characterObject(image, position, speed, scale, direction){
     this.imageNum = image;
     this.image = getCharacter(this.imageNum);
-    this.width = this.image.width;
-    this.height = this.image.height;
+    this.imageWidth = this.image.width;
+    this.imageHeight = this.image.height;
+    this.width = this.imageWidth * scale;
+    this.height = this.imageHeight * scale;
     this.position = position;  
     this.rotation = 0;
     this.speed = speed || 0;

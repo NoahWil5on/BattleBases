@@ -19,9 +19,9 @@ app.game = {
             y: 100
         };
         var enemyBasePos = {
-            x: ((((base.width / 2) * .5) - (app.main.worldSize.width / 2)) / -1),
-            y: -100}; 
-       // enemyBasePos.x *= -1;
+            x: ((base.width / 2) * .5) - (app.main.worldSize.width / 2),
+            y: 100}; 
+        enemyBasePos.x *= -1;
         console.log(enemyBasePos);
         this.myBase = new baseObject(
             'base',
@@ -49,14 +49,13 @@ app.game = {
 
     },
     update: function(dt, ctx){
-        this.updateCharacters(dt);
         this.updateButtons();
-
-        this.draw(ctx);
         if(app.main.host){
+            this.updateCharacters(dt);
             this.updateCollisions();
+            sendCharacterList();
         }
-        //sendMyData();
+        this.draw(ctx);
     },
     updateCharacters: function(dt){
         for(var i = 0; i < this.myCharacters.length; i++){
@@ -177,13 +176,17 @@ app.game = {
         }
     },
     draw: function(ctx){
-        this.drawCharacters(ctx);
+        if(!app.main.host){
+            this.drawHostCharacters(ctx);
+        }else{
+            this.drawCharacters(ctx);
+        }
 
         this.myBase.draw(ctx);
         this.enemyBase.draw(ctx, true);
 
         this.myBase.drawHealth(ctx);
-        this.enemyBase.drawHealth(ctx);
+        this.enemyBase.drawHealth(ctx, true);
     },
     drawCharacters: function(ctx){
         for(var i = 0; i < this.myCharacters.length; i++){
@@ -191,26 +194,38 @@ app.game = {
         }
         for (var i = 0; i < this.enemyCharacters.length; i++){
             this.enemyCharacters[i].draw(ctx, true);
-            //this.drawEnemy(this.enemyCharacters[i], ctx);
         }
     },
-    drawEnemy: function(obj, ctx){
+    //draw the characters the host has
+    drawHostCharacters: function(ctx){
+        for(var i = 0; i < this.myCharacters.length; i++){
+            this.doNonHostDraw(ctx, this.myCharacters[i], getCharacter(this.myCharacters[i].imageNum));
+        }
+        for (var i = 0; i < this.enemyCharacters.length; i++){
+            this.doNonHostDraw(ctx, this.enemyCharacters[i], getCharacter(this.enemyCharacters[i].imageNum), true);
+        }
+    },
+    doNonHostDraw(ctx, obj, image, flip){
         ctx.save();
 
-        //not all objects will have rotation, if not then set rotation to 0
         var rot = obj.rotation || 0;        
         var scale = obj.scale || 1;   
-        var swap = -1;
+        var swap = 1;
+        if(flip) {
+            swap = -1;
+        }
         rot = (obj.rotation * Math.PI) / 180;  //convert rotation to radians
 
         ctx.rotate(rot);
-        ctx.scale(scale * swap,scale);
-        ctx.translate(obj.position.x / scale, obj.position.y / scale );
+        ctx.scale(scale * swap, scale);
+        console.log(swap);
+        
+        ctx.translate(obj.position.x / (scale * -swap), obj.position.y / (scale));
 
         ctx.drawImage(
-            getCharacter(obj.imageNum),
-            -(obj.width / 2),
-            -(obj.height / 2)
+            image,
+            -(obj.imageWidth / 2),
+            -(obj.imageHeight / 2)
         );
 
         ctx.restore();

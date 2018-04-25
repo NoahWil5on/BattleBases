@@ -1,8 +1,10 @@
 function buttonObject(image, position, scale){
     this.imageNum = image,
     this.image = getButton(this.imageNum);
-    this.width = this.image.width;
-    this.height = this.image.height;
+    this.imageWidth = this.image.width;
+    this.imageHeight = this.image.height;
+    this.width = this.imageWidth * scale;
+    this.height = this.imageHeight * scale;
     this.position = position;
     this.scale = scale || 1;
 	this.isClicked = false;
@@ -18,13 +20,13 @@ buttonObject.prototype.hover = function(correctPosition){
     let scale = this.scale || 1;
     if(correctPosition){
         pos = {
-            x: (this.position.x - ((this.width / 2) * scale)),
-            y: (this.position.y - ((this.height / 2) * scale))
+            x: (this.position.x - ((this.width / 2))),
+            y: (this.position.y - ((this.height / 2)))
         }
     }
     let buttonRect = {
-        width: this.width * scale,
-        height: this.height * scale,
+        width: this.width,
+        height: this.height,
         pos: pos
     };
     if(pointInRect(app.main.mouse,buttonRect)) 

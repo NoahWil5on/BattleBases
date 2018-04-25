@@ -25,14 +25,14 @@ const onMessage = (sock) => {
   socket.on('startGame', () => {
     socket.broadcast.to(`room${socket.room}`).emit('startGame', {});
   });
-  socket.on('updatePlayerInfo', (data) => {
-    socket.broadcast.to(`room${socket.room}`).emit('updatePlayerInfo', data);
-  });
+//   socket.on('updatePlayerInfo', (data) => {
+//     socket.broadcast.to(`room${socket.room}`).emit('updatePlayerInfo', data);
+//   });
   socket.on('createNewEnemyForHost', () => {
     socket.broadcast.to(`room${socket.room}`).emit('createNewEnemyForHost', {});
   });
-  socket.on('updateEnemiesCharacterList', (data) => {
-    socket.broadcast.to(`room${socket.room}`).emit('updateEnemiesCharacterList', data);
+  socket.on('updateNonHost', (data) => {
+    socket.broadcast.to(`room${socket.room}`).emit('updateNonHost', data);
   });
 };
 // temporarily taken out sock to pass eslint

@@ -1,8 +1,10 @@
 function baseObject(image, position, scale){
     this.imageNum = image;
     this.image = getGeneralObject(this.imageNum);
-    this.width = this.image.width;
-    this.height = this.image.height;
+    this.imageWidth = this.image.width;
+    this.imageHeight = this.image.height;
+    this.width = this.imageWidth * scale;
+    this.height = this.imageHeight * scale;
     this.position = position;  
     this.rotation = 0;
     this.health = 100;

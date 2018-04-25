@@ -5,8 +5,10 @@ function gameObject(image, position){
     throw new Error("Can't instantiate abstract class");
     this.imageNum = image;
     this.image = getGeneralObject(this.imageNum);
-    this.width = this.image.width;
-    this.height = this.image.height;
+    this.imageWidth = this.image.width;
+    this.imageHeight = this.image.height;
+    this.width = this.imageWidth * scale;
+    this.height = this.imageHeight * scale;
     this.position = position;
 };
 gameObject.prototype.draw = function(ctx, flip){
@@ -22,12 +24,12 @@ gameObject.prototype.draw = function(ctx, flip){
     ctx.rotate(rot);
     ctx.scale(scale * swap, scale);
     //flip them back lol
-    ctx.translate(this.position.x / (scale * swap), this.position.y / (scale * swap));
+    ctx.translate(this.position.x / (scale * swap), this.position.y / (scale));
 
     ctx.drawImage(
         this.image,
-        -(this.width / 2),
-        -(this.height / 2)
+        -(this.imageWidth / 2),
+        -(this.imageHeight / 2)
     );
 
     ctx.restore();

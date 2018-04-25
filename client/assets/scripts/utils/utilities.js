@@ -62,8 +62,8 @@ function RectRectCollision(box1, box2){
 //currently scale width the same way we scale the images
 function HorizontalCollision(player, enemy) {
     //enemy.position.x *= -1;
-    if (player.position.x < enemy.position.x + (enemy.width * enemy.scale) &&
-        enemy.position.x < player.position.x + (player.width * player.scale)) {
+    if (player.position.x + (player.width / 2) > enemy.position.x - (enemy.width / 2) &&
+        enemy.position.x + (enemy.width / 2) > player.position.x - (player.width / 2)) {
             return true;
         } else {
             return false;
