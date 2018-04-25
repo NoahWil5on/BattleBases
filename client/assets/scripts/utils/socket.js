@@ -32,6 +32,8 @@ function joinServer(){
     // });
     socket.on('createNewEnemyForHost', () => {
         //negative because base needs to be flipped?
+        if(app.game.enemyCurrency - 10 < 0) return;
+        app.game.enemyCurrency -= 10;
         var charPos = JSON.parse(JSON.stringify(app.game.enemyBase.position))
         charPos.y += 20;
         app.game.enemyCharacters.push(new characterObject(
@@ -56,6 +58,7 @@ function joinServer(){
         app.game.enemyTurret.rotation = data.enemyTurretRotation;
         app.game.myBullets = data.myBullets;
         app.game.enemyBullets = data.enemyBullets;
+        app.game.myCurrency = data.myCurrency;
     });
     socket.on('gameOver', (data) => {
         app.over.win = data.win;
@@ -81,7 +84,8 @@ function sendCharacterList() {
         myBullets: app.game.enemyTurret.bullets,
         myTurretRotation: app.game.enemyTurret.rotation,
         enemyBullets: app.game.myTurret.bullets,
-        enemyTurretRotation: app.game.myTurret.rotation
+        enemyTurretRotation: app.game.myTurret.rotation,
+        myCurrency: app.game.enemyCurrency,
     }));
 }
 

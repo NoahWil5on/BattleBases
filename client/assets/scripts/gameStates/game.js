@@ -15,7 +15,12 @@ app.game = {
     myBullets: [],
     enemyBullets: [],
 
+    myCurrency: 50,
+    enemyCurrency: 50,
+
     makeCharacterButton: undefined,
+    currencyText: undefined,
+    currencyCounter: 0,
 
     init: function(){
         //make base
@@ -44,7 +49,7 @@ app.game = {
             '01',   //turret
             '01',   //bullet
             500,    //range
-            10,     //damage
+            5,     //damage
             1,      //rounds per second
             {   x: this.myBase.position.x,
                 y: this.myBase.position.y - 100},   //position
@@ -55,7 +60,7 @@ app.game = {
             '01',   //turret
             '01',   //bullet
             500,    //range
-            10,     //damage
+            5,     //damage
             1,      //rounds per second
             {   x: this.enemyBase.position.x,
                 y: this.enemyBase.position.y - 100},   //position
@@ -74,11 +79,26 @@ app.game = {
 			'01',		//image
             charButtonPos,
             .1);	    //position
+        this.currencyText = new textObject(
+            `${this.myCurrency}`,    //text
+            {x: 80,             //position
+            y: 50},
+            '#000',                             //color
+            'left',                           //text align
+            'sans-serif',                       //font
+            '28'                                //size
+        );
 
     },
     update: function(dt, ctx){
         this.updateButtons();
         if(app.main.host){
+            this.currencyCounter += dt;
+            if(this.currencyCounter > 1.5){
+                this.currencyCounter = 0;
+                this.myCurrency++;
+                this.enemyCurrency++;
+            }
             this.myTurret.update(dt, this.enemyCharacters);
             this.enemyTurret.update(dt, this.myCharacters);
             this.updateCharacters(dt);
@@ -101,6 +121,8 @@ app.game = {
     updateButtons: function(){
         if (this.makeCharacterButton.clicked(true)) {
             if (app.main.host) {
+                if(this.myCurrency - 10 < 0) return;
+                this.myCurrency -= 10;
                 var charPos = JSON.parse(JSON.stringify(this.myBase.position))
                 charPos.y += 20;
                 this.myCharacters.push(new characterObject(
@@ -150,6 +172,7 @@ app.game = {
                     this.myTurret.bullets.splice(j, 1);
                     if(this.enemyCharacters[i].health <= 0){
                         this.enemyCharacters.splice(i, 1);
+                        this.myCurrency += 3;
                     }
                     break;
                 }
@@ -171,6 +194,7 @@ app.game = {
                     this.enemyTurret.bullets.splice(j, 1);
                     if(this.myCharacters[i].health <= 0){
                         this.myCharacters.splice(i, 1);
+                        this.enemyCurrency += 3;
                     }
                     break;
                 }
@@ -205,10 +229,12 @@ app.game = {
                     //Kill them for now.
                     if(this.myCharacters[i].health <= 0){
                         this.myCharacters.splice(i, 1);
+                        this.enemyCurrency += 5;
                     }
                     //Kill them for now.
                     if(this.enemyCharacters[i].health <= 0){
                         this.enemyCharacters.splice(i, 1);
+                        this.myCurrency += 5;
                     }
                     break;
                 }
@@ -234,7 +260,7 @@ app.game = {
             //Enemies colliding with my Base
             if (HorizontalCollision(this.enemyCharacters[n], this.myBase)) {
                 console.log("My base is under attack!");
-                this.myBase.takeDamage(this.enemyCharacters[i].damage * dt);
+                this.myBase.takeDamage(this.enemyCharacters[n].damage * dt);
                 this.enemyCharacters[i].isColliding = true;
 
                 //End game if players health drops below 0
@@ -349,6 +375,8 @@ app.game = {
         ctx.restore();
     },
 	drawUI: function(ctx) {
-		this.makeCharacterButton.draw(ctx); //draw the button used to make our character
+        this.makeCharacterButton.draw(ctx); //draw the button used to make our character
+        this.currencyText.text = `${this.myCurrency}`;
+        this.currencyText.draw(ctx);
 	}
 }
