@@ -18,17 +18,14 @@ function joinServer(){
     socket.on('startGame', () => {
         app.main.currentGameState = app.main.gameState.GAME
     });
-    socket.on('updatePlayerInfo', (data) => {
-        app.game.enemyCharacters = data.characters;
-        //For each of these enemy characters, change their direction to -1
-        for (var i = 0; i < data.characters.length; i++) {
-            app.game.enemyCharacters[i].direction = -1;
-        }
+    socket.on('makeCharacter', (data) => {
+
     })
 }
-function sendMyData(){
-    socket.emit('updatePlayerInfo', {characters: app.game.myCharacters, enemies: app.game.myEnemies});
+function sendMakeCharacter(data){
+    socket.emit('makeCharacter', data)
 }
+
 function init(){
     app.main.init();
 }
