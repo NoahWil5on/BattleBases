@@ -5,7 +5,13 @@ function characterObject(image, position, speed, health, damage, scale, directio
     this.imageHeight = this.image.height;
     this.width = this.imageWidth * scale;
     this.height = this.imageHeight * scale;
-    this.position = position;  
+    //Lerp
+    this.position = position;
+    this.prevPosition = position;
+    this.destPosition = position;
+    this.alpha = 0;
+    this.lastUpdate = new Date().getTime();
+
     this.rotation = 0;
     this.speed = speed || 0;
     this.direction = direction || 1;   
@@ -16,8 +22,21 @@ function characterObject(image, position, speed, health, damage, scale, directio
     this.health = health;
 }
 characterObject.prototype = Object.create(gameObject.prototype);
-characterObject.prototype.update = function(dt){
+characterObject.prototype.update = function (dt) {
+    //lerp
+    this.lastUpdate = new Date().getTime();  
+    if (this.alpha < 1) {
+        this.alpha += 0.05;
+    }
+    /*
+    this.position.x = lerp(this.prevPosition.x, this.destPosition.x, this.alpha);
+    //this.position.y = lerp(this.prevPosition.y, this.destPosition.y, this.alpha);
+    */
+
 	//If the character is colliding with another character, he shouldnt move.
     if(!dt || dt === undefined || this.isColliding) return;
     this.position.x += (this.speed * this.direction) * dt;
 }
+
+
+

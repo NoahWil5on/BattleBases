@@ -50,6 +50,28 @@ function joinServer(){
     });
 
     socket.on('updateNonHost', (data) => {
+        //update lerp values
+
+ //       for (var i = 0; i < app.game.myCharacters.length; i++) {
+ //           app.game.myCharacters[i] = data.myCharacters[0];
+ //           data.myCharacters.splice(0, 1);
+ //       }
+ //       //then add the new ones
+ //       for (var i = 0; i < data.myCharacters.length; i++) {
+ //           app.game.myCharacters.push(data.myCharacters[i]);
+ //       }
+
+        //Need to loop through each character in app
+        //Compare with the same character from data
+        //If they are the same, check to see if apps last update > data last update
+        //assign previous positions of data characters to app characters
+        //set app character alpha = 0.5
+
+        /*
+        for (var i = 0; i < data.myCharacters; i++) {
+            app.game.myCharacters[i] = data.myCharacters[i];
+        }*/
+
         app.game.myCharacters = data.myCharacters;
         app.game.enemyCharacters = data.enemies;
         app.game.myBase.health = data.myHealth;
@@ -76,6 +98,9 @@ function sendHostNewCharacter(){
 function sendCharacterList() {
     //Send the new list every 20 ms, flipping the characters
     //console.log(app.game.myCharacters);
+
+
+
     socket.emit('updateNonHost', ({
         enemies: app.game.myCharacters,
         myCharacters: app.game.enemyCharacters,

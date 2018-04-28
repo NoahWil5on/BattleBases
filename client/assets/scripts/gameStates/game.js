@@ -108,7 +108,7 @@ app.game = {
         this.draw(ctx);
     },
     updateCharacters: function(dt){
-        for(var i = 0; i < this.myCharacters.length; i++){
+        for (var i = 0; i < this.myCharacters.length; i++){
             this.myCharacters[i].update(dt);
         }
 
@@ -117,6 +117,20 @@ app.game = {
         }
 
         //console.log(this.enemyCharacters);
+    },
+    updatePositions: function () {
+        for (var i = 0; i < this.myCharacters.length; i++) {
+            const myChar = this.myCharacters[i];
+
+            //assign previous positions to last positions
+            myChar.prevPosition = myChar.position;
+
+            //update destPosition
+
+
+            //reset alpha
+            myChar.alpha = 0.5;
+        }
     },
     updateButtons: function(){
         if (this.makeCharacterButton.clicked(true)) {
@@ -247,8 +261,10 @@ app.game = {
             if (HorizontalCollision(this.myCharacters[i], this.enemyBase)) {
                 console.log("Hey, we're killing their base");
                 //for now, just kill the character and do some damage to the base
-                this.enemyBase.takeDamage(this.myCharacters[i].damage * dt);
-                this.myCharacters[i].isColliding = true;
+                if (this.myCharacters[i]) {
+                    this.enemyBase.takeDamage(this.myCharacters[i].damage * dt);
+                    this.myCharacters[i].isColliding = true;
+                }
 
                 //End game if players health drops below 0
                 if (this.enemyBase.health <= 0) {
@@ -260,8 +276,10 @@ app.game = {
             //Enemies colliding with my Base
             if (HorizontalCollision(this.enemyCharacters[n], this.myBase)) {
                 console.log("My base is under attack!");
-                this.myBase.takeDamage(this.enemyCharacters[n].damage * dt);
-                this.enemyCharacters[i].isColliding = true;
+                if (this.enemyCharacters[i]) {
+                    this.myBase.takeDamage(this.enemyCharacters[n].damage * dt);
+                    this.enemyCharacters[i].isColliding = true;
+                }
 
                 //End game if players health drops below 0
                 if (this.myBase.health <= 0) {

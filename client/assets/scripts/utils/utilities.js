@@ -95,6 +95,7 @@ function pointInRect(point, rect){
     return false;
 }
 //interpolate between two numbers
+//s - initial vector, e - second vector, a - time
 function lerp(s,e,a){
     return s + ((e - s) * a)
 }
