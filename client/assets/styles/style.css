@@ -22,11 +22,11 @@
     background-color: #888;
     position: fixed;
 }
-#adDiv{
+#my-ad-div{
     margin: 0 auto;
     text-align: center;
 }
-#ad {
+#fake-ad {
     width: 530.5px;
     height: 256px;
     text-align: center;
