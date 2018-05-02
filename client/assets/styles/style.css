@@ -22,6 +22,16 @@
     background-color: #888;
     position: fixed;
 }
+#adDiv{
+    margin: 0 auto;
+    text-align: center;
+}
+#ad {
+    width: 530.5px;
+    height: 256px;
+    text-align: center;
+    margin: 0px auto;
+}
 .hidden{
     display: none;
 }

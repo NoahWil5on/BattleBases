@@ -59,13 +59,16 @@ characterObject.prototype.update = function (dt) {
         }
     }
     
-    this.position.x = lerp(this.prevPosition.x, this.destPosition.x, this.alpha);
-    //console.log(this.position.x);
+
+
     //this.position.y = lerp(this.prevPosition.y, this.destPosition.y, this.alpha);
 
 	//If the character is colliding with another character, he shouldnt move.
     if (!dt || dt === undefined || this.isColliding || this.inRange) return;
     this.destPosition.x += (this.speed * this.direction) * dt;
+
+    this.position.x = lerp(this.prevPosition.x, this.destPosition.x, this.alpha);
+    console.log(this.position.x);
 }
 characterObject.prototype.drawBullets = function (ctx) {
     this.bullets.forEach(bullet => {
