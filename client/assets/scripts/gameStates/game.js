@@ -130,6 +130,7 @@ app.game = {
             }
             this.myTurret.update(dt, this.enemyCharacters);
             this.enemyTurret.update(dt, this.myCharacters);
+            this.updatePositions();
             this.updateCharacters(dt);
             this.updateCollisions(dt);
             sendCharacterList();
@@ -152,13 +153,13 @@ app.game = {
             const myChar = this.myCharacters[i];
 
             //assign previous positions to last positions
-            myChar.prevPosition = myChar.position;
+            this.myCharacters[i].prevPosition = myChar.position;
 
             //update destPosition
 
 
-            //reset alpha
-            myChar.alpha = 0.05;
+            //reset alpha - no
+            //myChar.alpha = 0.05;
         }
     },
     updateButtons: function(){
@@ -443,7 +444,15 @@ app.game = {
         this.enemyTurret.draw(ctx, true);
     },
     drawCharacters: function(ctx){
-        for(var i = 0; i < this.myCharacters.length; i++){
+        for (var i = 0; i < this.myCharacters.length; i++){
+            /*
+            if (this.myCharacters[i].alpha < 1) {
+                this.myCharacters[i].alpha += 0.05;
+            }
+
+            this.myCharacters[i].position.x = lerp(this.myCharacters[i].prevPosition.x, this.myCharacters[i].destPosition.x, this.myCharacters[i].alpha);
+            //console.log(this.position.x);
+            //this.position.y = lerp(this.prevPosition.y, this.destPosition.y, this.alpha);*/
             this.myCharacters[i].draw(ctx);
         }
         for (var i = 0; i < this.enemyCharacters.length; i++){

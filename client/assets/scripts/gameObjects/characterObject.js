@@ -28,14 +28,16 @@ characterObject.prototype.update = function (dt) {
     if (this.alpha < 1) {
         this.alpha += 0.05;
     }
-    /*
+    
     this.position.x = lerp(this.prevPosition.x, this.destPosition.x, this.alpha);
+    console.log(this.position.x);
     //this.position.y = lerp(this.prevPosition.y, this.destPosition.y, this.alpha);
-    */
 
 	//If the character is colliding with another character, he shouldnt move.
-    if(!dt || dt === undefined || this.isColliding) return;
-    this.position.x += (this.speed * this.direction) * dt;
+    if (!dt || dt === undefined || this.isColliding) return;
+    this.destPosition.x += (this.speed * this.direction) * dt;
+
+
 }
 
 

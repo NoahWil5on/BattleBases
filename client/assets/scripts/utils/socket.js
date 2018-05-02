@@ -94,13 +94,18 @@ function joinServer(){
         //set app character alpha = 0.5
 
         
-        console.log("characters before:");
-        console.log(app.game.myCharacters);
+        //console.log("characters before:");
+        //console.log(app.game.myCharacters);
 
         lerpData(data);
 
-        console.log("characters after:");
-        console.log(app.game.myCharacters);
+        //console.log("characters after:");
+        for (var i = 0; i < app.game.myCharacters.length; i++) {
+            console.log("Dest: " + app.game.myCharacters[0].destPosition.x);
+            console.log("Prev: " + app.game.myCharacters[0].prevPosition.x);
+            console.log("Pos: " + app.game.myCharacters[0].position.x);
+        }
+
         
 
         //app.game.myCharacters = data.myCharacters;
@@ -158,24 +163,25 @@ function lerpData(data) {
                 //update values
 
                 //check if its old
-                /*if (myChar.lastUpdate <= data.myCharacters[n].lastUpdate) {
+                if (myChar.lastUpdate <= data.myCharacters[n].lastUpdate) {
                     //update
-                }*/
-                app.game.myCharacters[i].lastUpdate = data.myCharacters[n].lastUpdate;
+                    app.game.myCharacters[i].lastUpdate = data.myCharacters[n].lastUpdate;
 
-                //positions
-                app.game.myCharacters[i].prevPosition = data.myCharacters[n].prevPosition;
-                app.game.myCharacters[i].destPosition = data.myCharacters[n].destPosition;
+                    //positions
+                    app.game.myCharacters[i].prevPosition = data.myCharacters[n].prevPosition;
+                    app.game.myCharacters[i].destPosition = data.myCharacters[n].destPosition;
 
-                app.game.myCharacters[i].alpha = 0.05;
+                    app.game.myCharacters[i].alpha = 0.05;
 
-                //not lerping
-                app.game.myCharacters[i].position = data.myCharacters[n].position;
+                    //not lerping
+                    //app.game.myCharacters[i].position = data.myCharacters[n].position;
 
 
-                data.myCharacters.splice(n, 1);
-                //remove the character from the data, since we dont need them anymore
-                break;
+                    data.myCharacters.splice(n, 1);
+                    //remove the character from the data, since we dont need them anymore
+                    break;
+                }
+
             }
         }
         //if our character isnt in the data array, then it means hes dead. remove him.
