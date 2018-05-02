@@ -25,8 +25,8 @@ const onMessage = (sock) => {
   socket.on('startGame', () => {
     socket.broadcast.to(`room${socket.room}`).emit('startGame', {});
   });
-  socket.on('createNewEnemyForHost', () => {
-    socket.broadcast.to(`room${socket.room}`).emit('createNewEnemyForHost', {});
+  socket.on('createNewEnemyForHost', (data) => {
+    socket.broadcast.to(`room${socket.room}`).emit('createNewEnemyForHost', data);
   });
   socket.on('updateNonHost', (data) => {
     socket.broadcast.to(`room${socket.room}`).emit('updateNonHost', data);

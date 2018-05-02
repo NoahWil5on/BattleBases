@@ -30,7 +30,33 @@ function joinServer(){
     //         app.game.enemyCharacters[i].direction = -1;
     //     }
     // });
-    socket.on('createNewEnemyForHost', () => {
+    socket.on('createNewEnemyForHost', (data) => {
+        var img = '01';
+        var health = 25;
+        var damage = 10;
+        var speed = 100;
+
+        //ranged
+        if (data == 2) {
+            img = '02';
+            health = 20;
+            damage = 15;
+            speed = 100;
+        }//speed
+        if (data == 3) {
+            img = '03';
+            health = 15;
+            damage = 15;
+            speed = 150;
+        }//big boi
+        if (data == 4) {
+            img = '04';
+            health = 80;
+            damage = 20;
+            speed = 70;
+        }
+
+
         //negative because base needs to be flipped?
         if(app.game.enemyCurrency - 10 < 0) return;
         app.game.enemyCurrency -= 10;
@@ -39,9 +65,9 @@ function joinServer(){
         app.game.enemyCharacters.push(new characterObject(
             '01',
             charPos,
-            100,
-            20, //health
-            10, //damage
+            speed,
+            health, //health
+            damage, //damage
             .15,
             -1
         ));
@@ -67,12 +93,17 @@ function joinServer(){
         //assign previous positions of data characters to app characters
         //set app character alpha = 0.5
 
-        /*
-        for (var i = 0; i < data.myCharacters; i++) {
-            app.game.myCharacters[i] = data.myCharacters[i];
-        }*/
+        
+        console.log("characters before:");
+        console.log(app.game.myCharacters);
 
-        app.game.myCharacters = data.myCharacters;
+        lerpData(data);
+
+        console.log("characters after:");
+        console.log(app.game.myCharacters);
+        
+
+        //app.game.myCharacters = data.myCharacters;
         app.game.enemyCharacters = data.enemies;
         app.game.myBase.health = data.myHealth;
         app.game.enemyBase.health = data.enemyHealth;
@@ -92,8 +123,9 @@ function sendOver(win){
     app.over.win = !win;
     app.main.currentGameState = app.main.gameState.OVER;
 }
-function sendHostNewCharacter(){
-    socket.emit('createNewEnemyForHost');
+function sendHostNewCharacter(data) {
+    //send type of character created.
+    socket.emit('createNewEnemyForHost', data);
 }
 function sendCharacterList() {
     //Send the new list every 20 ms, flipping the characters
@@ -112,6 +144,51 @@ function sendCharacterList() {
         enemyTurretRotation: app.game.myTurret.rotation,
         myCurrency: app.game.enemyCurrency,
     }));
+}
+
+function lerpData(data) {
+    for (var i = 0; i < app.game.myCharacters.length; i++) {
+        const myChar = app.game.myCharacters[i];
+        var alreadyExists = false;
+        //check if character exists in the data array
+        for (var n = 0; n < data.myCharacters.length; n++) {
+            if (myChar.id == data.myCharacters[n].id) {
+                //same character in both arrays
+                alreadyExists = true;
+                //update values
+
+                //check if its old
+                /*if (myChar.lastUpdate <= data.myCharacters[n].lastUpdate) {
+                    //update
+                }*/
+                app.game.myCharacters[i].lastUpdate = data.myCharacters[n].lastUpdate;
+
+                //positions
+                app.game.myCharacters[i].prevPosition = data.myCharacters[n].prevPosition;
+                app.game.myCharacters[i].destPosition = data.myCharacters[n].destPosition;
+
+                app.game.myCharacters[i].alpha = 0.05;
+
+                //not lerping
+                app.game.myCharacters[i].position = data.myCharacters[n].position;
+
+
+                data.myCharacters.splice(n, 1);
+                //remove the character from the data, since we dont need them anymore
+                break;
+            }
+        }
+        //if our character isnt in the data array, then it means hes dead. remove him.
+        if (!alreadyExists) {
+            app.game.myCharacters.splice(i, 1);
+            i--;
+        }
+    }
+
+    //now loop through the rest of our data and add the new characters
+    for (var i = 0; i < data.myCharacters.length; i++) {
+        app.game.myCharacters.push(data.myCharacters[i]);
+    }
 }
 
 function init(){

@@ -19,6 +19,10 @@ app.game = {
     enemyCurrency: 50,
 
     makeCharacterButton: undefined,
+    makeRangedCharButton: undefined,
+    makeSpeedCharButton: undefined,
+    makeBigCharButton: undefined,
+
     currencyText: undefined,
     currencyCounter: 0,
 
@@ -79,6 +83,31 @@ app.game = {
 			'01',		//image
             charButtonPos,
             .1);	    //position
+
+        this.makeRangedCharButton = new buttonObject(
+            '01',
+            {
+                x: (button.width / 2) * .1,
+                y: (button.height / 2) * .3
+            },
+            .1);
+
+        this.makeSpeedCharButton = new buttonObject(
+            '01',
+            {
+                x: (button.width / 2) * .1,
+                y: (button.height / 2) * .5
+            },
+            .1);
+
+        this.makeBigCharButton = new buttonObject(
+            '01',
+            {
+                x: (button.width / 2) * .1,
+                y: (button.height / 2) * .7
+            },
+            .1);
+
         this.currencyText = new textObject(
             `${this.myCurrency}`,    //text
             {x: 80,             //position
@@ -129,7 +158,7 @@ app.game = {
 
 
             //reset alpha
-            myChar.alpha = 0.5;
+            myChar.alpha = 0.05;
         }
     },
     updateButtons: function(){
@@ -143,7 +172,7 @@ app.game = {
                     '01',
                     charPos,
                     100,
-                    20, //health
+                    25, //health
                     10, //damage
                     .15,
                     1
@@ -151,9 +180,71 @@ app.game = {
             } else {
                 //theyre the other player, 
                 //emit an enemy created to the host
-                sendHostNewCharacter();
+                sendHostNewCharacter(1);
             }
-
+        }
+        if (this.makeRangedCharButton.clicked(true)) {
+            if (app.main.host) {
+                if (this.myCurrency - 15 < 0) return;
+                this.myCurrency -= 15;
+                var charPos = JSON.parse(JSON.stringify(this.myBase.position))
+                charPos.y += 20;
+                this.myCharacters.push(new characterObject(
+                    '01',
+                    charPos,
+                    100,
+                    20, //health
+                    15, //damage
+                    .15,
+                    1
+                ));
+            } else {
+                //theyre the other player, 
+                //emit an enemy created to the host
+                sendHostNewCharacter(2);
+            }
+        }
+        if (this.makeSpeedCharButton.clicked(true)) {
+            if (app.main.host) {
+                if (this.myCurrency - 8 < 0) return;
+                this.myCurrency -= 8;
+                var charPos = JSON.parse(JSON.stringify(this.myBase.position))
+                charPos.y += 20;
+                this.myCharacters.push(new characterObject(
+                    '01',
+                    charPos,
+                    150,
+                    15, //health
+                    15, //damage
+                    .15,
+                    1
+                ));
+            } else {
+                //theyre the other player, 
+                //emit an enemy created to the host
+                sendHostNewCharacter(3);
+            }
+        }
+        if (this.makeBigCharButton.clicked(true)) {
+            if (app.main.host) {
+                if (this.myCurrency - 30 < 0) return;
+                this.myCurrency -= 30;
+                var charPos = JSON.parse(JSON.stringify(this.myBase.position))
+                charPos.y += 20;
+                this.myCharacters.push(new characterObject(
+                    '01',
+                    charPos,
+                    70,
+                    80, //health
+                    20, //damage
+                    .15,
+                    1
+                ));
+            } else {
+                //theyre the other player, 
+                //emit an enemy created to the host
+                sendHostNewCharacter(4);
+            }
         }
     },
     updateCollisions: function(dt){
@@ -394,6 +485,9 @@ app.game = {
     },
 	drawUI: function(ctx) {
         this.makeCharacterButton.draw(ctx); //draw the button used to make our character
+        this.makeRangedCharButton.draw(ctx);
+        this.makeSpeedCharButton.draw(ctx);
+        this.makeBigCharButton.draw(ctx);
         this.currencyText.text = `${this.myCurrency}`;
         this.currencyText.draw(ctx);
 	}
