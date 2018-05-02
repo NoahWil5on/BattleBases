@@ -6,9 +6,9 @@ function characterObject(name, position, speed, health, damage, value, ranged, r
     this.width = this.imageWidth * scale;
     this.height = this.imageHeight * scale;
     //Lerp
-    this.position = position;
-    this.prevPosition = position;
-    this.destPosition = position;
+    this.position = JSON.parse(JSON.stringify(position));
+    this.prevPosition = JSON.parse(JSON.stringify(position));
+    this.destPosition = JSON.parse(JSON.stringify(position));
     this.alpha = 0;
     this.lastUpdate = new Date().getTime();
 
@@ -16,7 +16,6 @@ function characterObject(name, position, speed, health, damage, value, ranged, r
     this.speed = speed || 0;
     this.direction = direction || 1;   
     this.scale = scale || 1;
-    this.id = `${Date.now()}`;
     this.isColliding = false;
     this.damage = damage || 10;
     this.health = health;
@@ -67,7 +66,7 @@ characterObject.prototype.update = function (dt) {
     if (!dt || dt === undefined || this.isColliding || this.inRange) return;
     this.destPosition.x += (this.speed * this.direction) * dt;
 
-    this.position.x = lerp(this.prevPosition.x, this.destPosition.x, this.alpha);
+    this.position.x = lerp(this.position.x, this.destPosition.x, .2);
     console.log(this.position.x);
 }
 characterObject.prototype.drawBullets = function (ctx) {

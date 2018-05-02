@@ -791,9 +791,19 @@ app.game = {
     drawHostCharacters: function (ctx) {
         for (var i = 0; i < this.myCharacters.length; i++) {
             this.doNonHostDraw(ctx, this.myCharacters[i], getCharacter(this.myCharacters[i].imageNum));
+            if(this.myCharacters[i].ranged){
+                for(var j = 0; j < this.myCharacters[i].bullets.length; j++){
+                    this.doNonHostDraw(ctx, this.myCharacters[i].bullets[j], getBullet(this.myCharacters[i].bullets[j].imageNum));
+                }
+            }
         }
         for (var i = 0; i < this.enemyCharacters.length; i++) {
             this.doNonHostDraw(ctx, this.enemyCharacters[i], getCharacter(this.enemyCharacters[i].imageNum), true);
+            if(this.enemyCharacters[i].ranged){
+                for(var j = 0; j < this.enemyCharacters[i].bullets.length; j++){
+                    this.doNonHostDraw(ctx, this.enemyCharacters[i].bullets[j], getBullet(this.enemyCharacters[i].bullets[j].imageNum));
+                }
+            }
         }
     },
     doNonHostDraw(ctx, obj, image, flip, vertFlip) {

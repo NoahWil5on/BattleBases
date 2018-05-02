@@ -10,6 +10,7 @@ function gameObject(image, position){
     this.width = this.imageWidth * scale;
     this.height = this.imageHeight * scale;
     this.position = position;
+    this.id = `${Date.now()}`;
 };
 gameObject.prototype.draw = function(ctx, flip, override){
     var image = this.image

@@ -114,38 +114,7 @@ function joinServer(){
         //console.log(app.game.enemyCharacters);
     });
 
-    socket.on('updateNonHost', (data) => {
-        //update lerp values
-
- //       for (var i = 0; i < app.game.myCharacters.length; i++) {
- //           app.game.myCharacters[i] = data.myCharacters[0];
- //           data.myCharacters.splice(0, 1);
- //       }
- //       //then add the new ones
- //       for (var i = 0; i < data.myCharacters.length; i++) {
- //           app.game.myCharacters.push(data.myCharacters[i]);
- //       }
-
-        //Need to loop through each character in app
-        //Compare with the same character from data
-        //If they are the same, check to see if apps last update > data last update
-        //assign previous positions of data characters to app characters
-        //set app character alpha = 0.5
-
-        
-        //console.log("characters before:");
-        //console.log(app.game.myCharacters);
-
-        lerpData(data);
-
-        //console.log("characters after:");
-        for (var i = 0; i < app.game.myCharacters.length; i++) {
-            console.log("Dest: " + app.game.myCharacters[0].destPosition.x);
-            console.log("Prev: " + app.game.myCharacters[0].prevPosition.x);
-            console.log("Pos: " + app.game.myCharacters[0].position.x);
-        }
-
-        
+    socket.on('updateNonHost', (data) => {       
 
         //app.game.myCharacters = data.myCharacters;
         if(app.game.enemyBase.level != data.enemyBase.level){
@@ -160,13 +129,16 @@ function joinServer(){
             app.game.baseCostText.text = app.game.baseCost[newInfo.base.level];
             app.game.upgradeBaseButton.image = getButton(`base?0${newInfo.base.level + 1}?`);
         }
-        app.game.enemyCharacters = data.enemies;
+
+        app.game.enemyCharacters = lerpData(app.game.enemyCharacters,data.enemies);
+        app.game.myCharacters = lerpData(app.game.myCharacters,data.myCharacters);
+        app.game.myBullets = lerpData(app.game.myBullets, data.myBullets);
+        app.game.enemyBullets = lerpData(app.game.enemyBullets, data.enemyBullets);
+        app.game.myTurret.rotation = lerp(app.game.myTurret.rotation, data.myTurretRotation, .2);
+        app.game.enemyTurret.rotation = lerp(app.game.enemyTurret.rotation, data.enemyTurretRotation, .2);
+
         app.game.myBase.health = data.myBase.health;
         app.game.enemyBase.health = data.enemyBase.health;
-        app.game.myTurret.rotation = data.myTurretRotation;
-        app.game.enemyTurret.rotation = data.enemyTurretRotation;
-        app.game.myBullets = data.myBullets;
-        app.game.enemyBullets = data.enemyBullets;
         app.game.myCurrency = data.myCurrency;
     });
     socket.on('gameOver', (data) => {
@@ -223,50 +195,41 @@ function sendCharacterList() {
     }));
 }
 
-function lerpData(data) {
-    for (var i = 0; i < app.game.myCharacters.length; i++) {
-        const myChar = app.game.myCharacters[i];
+function lerpData(myListArray, dataListArray) {
+    var myList = myListArray;
+    var dataList = dataListArray;
+    for (var i = myList.length - 1; i >= 0; i--) {
+        const myObj = myList[i];
         var alreadyExists = false;
         //check if character exists in the data array
-        for (var n = 0; n < data.myCharacters.length; n++) {
-            if (myChar.id == data.myCharacters[n].id) {
-                //same character in both arrays
+        for (var n = dataList.length - 1; n >= 0; n--) {
+            if (myObj.id === dataList[n].id) {
                 alreadyExists = true;
-                //update values
 
-                //check if its old
-                if (myChar.lastUpdate <= data.myCharacters[n].lastUpdate) {
-                    //update
-                    app.game.myCharacters[i].lastUpdate = data.myCharacters[n].lastUpdate;
+                myList[i].position.x = lerp(myList[i].position.x, dataList[n].position.x, .2);
+                myList[i].position.y = lerp(myList[i].position.y, dataList[n].position.y, .2);
+                myList[i].rotation= lerp(myList[i].rotation, dataList[n].rotation, .2);
 
-                    //positions
-                    app.game.myCharacters[i].prevPosition = data.myCharacters[n].prevPosition;
-                    app.game.myCharacters[i].destPosition = data.myCharacters[n].destPosition;
-
-                    app.game.myCharacters[i].alpha = 0.05;
-
-                    //not lerping
-                    //app.game.myCharacters[i].position = data.myCharacters[n].position;
-
-
-                    data.myCharacters.splice(n, 1);
-                    //remove the character from the data, since we dont need them anymore
-                    break;
+                //if this is a ranged character also lerp their bullets;
+                if(myList[i].ranged){
+                    myList[i].bullets = lerpData(myList[i].bullets, dataList[n].bullets);
                 }
-
+                
+                dataList.splice(n, 1);
+                break;
             }
         }
         //if our character isnt in the data array, then it means hes dead. remove him.
         if (!alreadyExists) {
-            app.game.myCharacters.splice(i, 1);
-            i--;
+            myList.splice(i, 1);
         }
     }
 
     //now loop through the rest of our data and add the new characters
-    for (var i = 0; i < data.myCharacters.length; i++) {
-        app.game.myCharacters.push(data.myCharacters[i]);
+    for (var i = 0; i < dataList.length; i++) {
+        myList.push(dataList[i]);
     }
+    return myList;
 }
 
 function init(){
