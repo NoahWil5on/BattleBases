@@ -145,7 +145,7 @@ function joinServer(){
     socket.on('gameOver', (data) => {
         app.over.win = data.win;
         app.main.currentGameState = app.main.gameState.OVER;
-    })
+    });
 }
 function upgradeBase(base, turret, data){
     base.level = data.level

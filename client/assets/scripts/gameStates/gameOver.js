@@ -39,7 +39,7 @@ app.over = {
         this.restartButton = new buttonObject (`menu?restart?`, {x, y}, 1);
         this.restartButtonActive = new buttonObject ('menu?restart?active', {x, y}, 1);
     },
-    update: function(dt, ctx){
+    update: function (dt, ctx) {
         this.updateButtons();
         this.draw(ctx);
         this.isHover = false;

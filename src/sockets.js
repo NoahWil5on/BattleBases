@@ -36,12 +36,16 @@ const onMessage = (sock) => {
   });
   socket.on('gameOver', (data) => {
     socket.broadcast.to(`room${socket.room}`).emit('gameOver', data);
+    socket.broadcast.to(`room${socket.room}`).emit('disconnect', {});
   });
 };
 // temporarily taken out sock to pass eslint
 const onDisconnect = (sock) => {
   const socket = sock;
   // Remove user from room, will need to handle what happens to other player.
+  console.log('disconnect called');
+  // let the other player know they won
+  socket.broadcast.to(`room${socket.room}`).emit('gameOver', { win: true });
   socket.leave(socket.room);
 };
 const configure = (ioServer) => {
@@ -68,7 +72,10 @@ const configure = (ioServer) => {
 
     onJoined(socket, host);
     onMessage(socket);
-    onDisconnect(socket);
+    // onDisconnect(socket);
+    socket.on('disconnect', () => {
+      onDisconnect(socket);
+    });
   });
 };
 
