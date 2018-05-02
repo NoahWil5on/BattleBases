@@ -65,7 +65,7 @@ turretObject.prototype.getTarget = function(characterList){
     var record = Number.MAX_VALUE;
     for(var i = 0; i < characterList.length; i++){
         var character = characterList[i];
-        var distance = magnitude({
+        var distance = getMagnitude({
             x: this.position.x - character.position.x,
             y: this.position.y - character.position.y
         });

@@ -23,7 +23,7 @@ function RectCircleCollision(box,ball){
     point.x += box.pos.x;
     point.y += box.pos.y;
 
-    var mag = magnitude({
+    var mag = getMagnitude({
         x: point.x - ball.pos.x,
         y: point.y - ball.pos.y
     });
@@ -39,7 +39,7 @@ function RectCircleCollision(box,ball){
 }
 //checks if two circles are colliding
 function CircleCircleCollision(ball1, ball2){
-    var difference = magnitude({
+    var difference = getMagnitude({
         x: (ball1.x - ball2.x),
         y: (ball1.y - ball2.y)
     });
@@ -47,11 +47,18 @@ function CircleCircleCollision(ball1, ball2){
     if(difference < (ball1.rad + ball2.rad)) return true;
     return false;
 }
-function magnitude(vec2){
+function getMagnitude2(vec2, a_vec2){
+    var myVec = {
+        x: vec2.x - a_vec2.x,
+        y: vec2.y - a_vec2.y
+    };
+    return getMagnitude(myVec);
+}
+function getMagnitude(vec2){
     return Math.sqrt(Math.pow(vec2.x, 2) + Math.pow(vec2.y, 2));
 }
 function normal(vec2){
-    var mag = magnitude(vec2);
+    var mag = getMagnitude(vec2);
     return {
         x: vec2.x / mag,
         y: vec2.y / mag
@@ -75,9 +82,8 @@ function HorizontalCollision(player, enemy) {
     if (player.position.x + (player.width / 2) > enemy.position.x - (enemy.width / 2) &&
         enemy.position.x + (enemy.width / 2) > player.position.x - (player.width / 2)) {
             return true;
-        } else {
-            return false;
-        }
+    } 
+    return false;
 }
 //returns mouse position ov given element
 function getMousePos(canvas, event) {

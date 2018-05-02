@@ -318,6 +318,8 @@ app.game = {
                     25, //health
                     10, //damage
                     8,
+                    false,
+                    0,
                     .521,
                     1
                 ));
@@ -340,6 +342,8 @@ app.game = {
                     15, //health
                     15, //damage
                     12,
+                    true,
+                    200,
                     .521,
                     1
                 ));
@@ -362,6 +366,8 @@ app.game = {
                     10, //health
                     10, //damage
                     5,
+                    false,
+                    0,
                     .521,
                     1
                 ));
@@ -384,6 +390,8 @@ app.game = {
                     80, //health
                     20, //damage
                     25,
+                    false,
+                    0,
                     .521,
                     1
                 ));
@@ -457,36 +465,116 @@ app.game = {
         //reset collisions
         for (var i = this.myCharacters.length - 1; i >= 0; i--) {
             this.myCharacters[i].isColliding = false;
+            this.myCharacters[i].inRange = false;
             if (i > 0) {
                 if (HorizontalCollision(this.myCharacters[i], this.myCharacters[i - 1]))
                     this.myCharacters[i].isColliding = true;
             }
+            if(!this.myCharacters[i].ranged) continue;
+            if(getMagnitude2({
+                x: (this.enemyBase.position.x) - this.enemyBase.imageWidth / 2, 
+                y: this.enemyBase.position.y}, this.myCharacters[i].position) < this.myCharacters[i].range){
+                this.myCharacters[i].inRange = true;
+            }
+            for(var j = this.myCharacters[i].bullets.length - 1; j >= 0; j--){
+                var destroyed = false;
+                for(var n = this.enemyCharacters.length - 1; n >= 0; n--){
+                    if(HorizontalCollision(this.enemyCharacters[n], this.myCharacters[i].bullets[j])){
+                        this.enemyCharacters[n].health -= this.myCharacters[i].bullets[j].damage;
+                        this.myCharacters[i].bullets.splice(j, 1);
+                        destroyed = true;
+                        if (this.enemyCharacters[n].health <= 0) {
+                            this.myCurrency += this.enemyCharacters[n].value;
+                            this.enemyCharacters.splice(n, 1);
+                        }
+                        break;
+                    }
+                }
+                if(destroyed) continue;
+                if(HorizontalCollision(this.enemyBase, this.myCharacters[i].bullets[j])){
+                    this.enemyBase.health -= this.myCharacters[i].bullets[j].damage;
+                    this.myCharacters[i].bullets.splice(j, 1);
+                    if (this.enemyBase.health <= 0) {
+                        sendOver(false);
+                    }
+                    break;
+                }
+            }
         }
         for (var n = this.enemyCharacters.length - 1; n >= 0; n--) {
             this.enemyCharacters[n].isColliding = false;
+            this.enemyCharacters[n].inRange = false;
             if (n > 0) {
                 if (HorizontalCollision(this.enemyCharacters[n], this.enemyCharacters[n - 1]))
                     this.enemyCharacters[n].isColliding = true;
             }
+            if(!this.enemyCharacters[n].ranged) continue;
+            if(getMagnitude2({
+                x: this.myBase.position.x + this.myBase.imageWidth / 2, 
+                y: this.myBase.position.y}, this.enemyCharacters[n].position) < this.enemyCharacters[n].range){
+                this.enemyCharacters[n].inRange = true;
+            }
+            for(var j = this.enemyCharacters[n].bullets.length - 1; j >= 0; j--){
+                var destroyed = false;
+                for (var i = this.myCharacters.length - 1; i >= 0; i--) {
+                    if(HorizontalCollision(this.myCharacters[i], this.enemyCharacters[n].bullets[j])){
+                        this.myCharacters[i].health -= this.enemyCharacters[n].bullets[j].damage;
+                        this.enemyCharacters[n].bullets.splice(j, 1);
+                        destroyed = true;
+                        if (this.myCharacters[i].health <= 0) {
+                            this.enemyCurrency += this.myCharacters[i].value;
+                            this.myCharacters.splice(i, 1);
+                            return;
+                        }
+                        break;
+                    }
+                }
+                if(destroyed) continue;
+                if(HorizontalCollision(this.myBase, this.enemyCharacters[n].bullets[j])){
+                    this.myBase.health -= this.enemyCharacters[n].bullets[j].damage;
+                    this.enemyCharacters[n].bullets.splice(j, 1);
+                    if (this.myBase.health <= 0) {
+                        sendOver(true);
+                    }
+                    break;
+                }                
+            }
         }
         for (var i = this.myCharacters.length - 1; i >= 0; i--) {
             for (var n = this.enemyCharacters.length - 1; n >= 0; n--) {
+                if(this.myCharacters[i].ranged){
+                    if(getMagnitude2(this.enemyCharacters[n].position, this.myCharacters[i].position)
+                    < this.myCharacters[i].range){
+                        this.myCharacters[i].inRange = true;
+                        this.myCharacters[i].isColliding = true;
+                    }
+                }
+                if(this.enemyCharacters[n].ranged){
+                    if(getMagnitude2(this.enemyCharacters[n].position, this.myCharacters[i].position)
+                    < this.enemyCharacters[n].range){
+                        this.enemyCharacters[n].inRange = true;
+                        this.enemyCharacters[n].isColliding = true;
+                    }
+                }
                 //myCharacters Colliding with Enemy Charcters
                 if (HorizontalCollision(this.myCharacters[i], this.enemyCharacters[n])) {
                     this.myCharacters[i].isColliding = true;
                     this.enemyCharacters[n].isColliding = true;
 
-                    this.myCharacters[i].health -= this.enemyCharacters[i].damage * dt;
-                    this.enemyCharacters[i].health -= this.myCharacters[i].damage * dt;
-                    //Kill them for now.
+                    if(!this.enemyCharacters[n].ranged){
+                        this.myCharacters[i].health -= this.enemyCharacters[n].damage * dt;
+                    }
+                    if(!this.myCharacters[i].ranged){
+                        this.enemyCharacters[n].health -= this.myCharacters[i].damage * dt;
+                    }
+
                     if (this.myCharacters[i].health <= 0) {
                         this.enemyCurrency += this.myCharacters[i].value;
                         this.myCharacters.splice(i, 1);
                     }
-                    //Kill them for now.
-                    if (this.enemyCharacters[i].health <= 0) {
-                        this.myCurrency += this.enemyCharacters[i].value;
-                        this.enemyCharacters.splice(i, 1);
+                    if (this.enemyCharacters[n].health <= 0) {
+                        this.myCurrency += this.enemyCharacters[n].value;
+                        this.enemyCharacters.splice(n, 1);
                     }
                     break;
                 }
@@ -497,7 +585,7 @@ app.game = {
         for (var i = 0; i < this.myCharacters.length; i++) {
             //Players colliding with enemy Base
             if (HorizontalCollision(this.myCharacters[i], this.enemyBase)) {
-                console.log("Hey, we're killing their base");
+                //console.log("Hey, we're killing their base");
                 //for now, just kill the character and do some damage to the base
                 if (this.myCharacters[i]) {
                     this.enemyBase.takeDamage(this.myCharacters[i].damage * dt);
@@ -513,7 +601,7 @@ app.game = {
         for (var n = 0; n < this.enemyCharacters.length; n++) {
             //Enemies colliding with my Base
             if (HorizontalCollision(this.enemyCharacters[n], this.myBase)) {
-                console.log("My base is under attack!");
+                //console.log("My base is under attack!");
                 if (this.enemyCharacters[i]) {
                     this.myBase.takeDamage(this.enemyCharacters[n].damage * dt);
                     this.enemyCharacters[i].isColliding = true;
@@ -547,7 +635,7 @@ app.game = {
     managePlayers: function () {
         for (var i = 0; i < this.myCharacters.length; i++) {
             if (this.myCharacters[i].position.x > 800) {
-                console.log("character off screen");
+                //console.log("character off screen");
                 this.myCharacters.splice(i, 1);
                 i--;
             }
@@ -609,9 +697,11 @@ app.game = {
             this.myCharacters[i].position.x = lerp(this.myCharacters[i].prevPosition.x, this.myCharacters[i].destPosition.x, this.myCharacters[i].alpha);
             //console.log(this.position.x);
             //this.position.y = lerp(this.prevPosition.y, this.destPosition.y, this.alpha);*/
+            if(this.myCharacters[i].ranged) this.myCharacters[i].drawBullets(ctx);
             this.myCharacters[i].draw(ctx);
         }
         for (var i = 0; i < this.enemyCharacters.length; i++) {
+            if(this.enemyCharacters[i].ranged) this.enemyCharacters[i].drawBullets(ctx);
             this.enemyCharacters[i].draw(ctx, true);
         }
     },

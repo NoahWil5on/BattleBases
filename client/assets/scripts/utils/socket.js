@@ -56,6 +56,8 @@ function joinServer(){
         var speed = 100;
         var cost = 10;
         var value = 8;
+        var ranged = false;
+        var range = 0;
 
         //ranged
         if (data == 2) {
@@ -65,6 +67,8 @@ function joinServer(){
             cost = 12;
             speed = 100;
             cost = app.game.charRangeCost;
+            ranged = true;
+            range = 200;
         }//speed
         if (data == 3) {
             img = `speed?0${app.game.enemyBase.level}`;
@@ -73,6 +77,8 @@ function joinServer(){
             speed = 175;
             value = 5;
             cost = app.game.charSpeedCost;
+            var ranged = false;
+            var range = 0;
         }//big boi
         if (data == 4) {
             img = `tank?0${app.game.enemyBase.level}`;
@@ -81,6 +87,8 @@ function joinServer(){
             speed = 60;
             value = 25;
             cost = app.game.charTankCost;
+            var ranged = false;
+            var range = 0;
         }
 
 
@@ -96,6 +104,8 @@ function joinServer(){
             health, //health
             damage, //damage
             value,
+            ranged,
+            range,
             .521,
             -1
         ));
