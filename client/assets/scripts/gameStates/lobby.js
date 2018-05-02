@@ -9,6 +9,7 @@ app.lobby = {
     dotTimer: 0,
     waitText: 'Waiting for another player',
 
+    //set up waiting text
     init: function(){    
         this.background = document.getElementById('background_lobby');
         this.waiting = new textObject(
@@ -21,6 +22,7 @@ app.lobby = {
             '48'                                //size
         );
     },
+    //update animated ellipses
     update: function(dt, ctx){
         this.dotTimer += dt;
         if(this.dotTimer > .3){
@@ -32,10 +34,12 @@ app.lobby = {
     },
     draw: function(ctx){
         var toWrite = this.waitText
+        //add periods to the end of "waiting"
         for(var i = 0; i < this.dotCount; i++){
             toWrite = `${toWrite}.`
         }
         this.waiting.text = toWrite;
+        //draw background
         ctx.drawImage(this.background,-5,-30);
 		this.waiting.draw(ctx);
     },

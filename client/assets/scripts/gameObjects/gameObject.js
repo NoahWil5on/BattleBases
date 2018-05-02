@@ -12,6 +12,10 @@ function gameObject(image, position){
     this.position = position;
     this.id = `${Date.now()}`;
 };
+
+//used by almost all gameobject to have a uniform draw call
+//scales, rotates, translates, draws specific image, image can be overidden with 
+//override
 gameObject.prototype.draw = function(ctx, flip, override){
     var image = this.image
     if(override){

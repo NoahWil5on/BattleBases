@@ -1,3 +1,4 @@
+//constructor
 function turretObject(image, bulletType, range, damage, fireRate, position, rotation, scale, direction){
     this.imageNum = image;
     this.bulletType = bulletType;
@@ -22,13 +23,18 @@ function turretObject(image, bulletType, range, damage, fireRate, position, rota
 turretObject.prototype = Object.create(gameObject.prototype);
 turretObject.prototype.update = function(dt, characterList){
     this.fireTimer += dt;
+
+    //find closest target
     this.getTarget(characterList);
+
+    //update bullets, remove old bullers
     for(var i = this.bullets.length - 1; i >= 0; i--){
         this.bullets[i].update(dt);
         if(this.bullets[i].lifeTime > 5)
         this.bullets.splice(i, 1);
     }
     if(this.target != undefined){
+        //vector to target
         var vector = normal({
             x: this.target.position.x - this.position.x,
             y: this.target.position.y - this.position.y,
@@ -36,8 +42,11 @@ turretObject.prototype.update = function(dt, characterList){
         if(this.direction === -1){
             vector.x *= -1;
         }
+        //smooth rotation between current rot and dest rot
         this.rotation = lerp(this.rotation, (180 / Math.PI) * Math.atan2(vector.y, vector.x), .2);
         var position = JSON.parse(JSON.stringify(this.position));
+
+        //fire bullet everyth 1/firerate seconds
         if(this.fireTimer > 1 / this.fireRate){
             this.bullets.push(new bulletObject(
                 this.bulletType, 

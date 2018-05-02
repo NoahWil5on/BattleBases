@@ -1,3 +1,4 @@
+//constructor
 function buttonObject(name, position, scale){
     this.imageNum = name,
     this.image = getButton(this.imageNum);
@@ -15,6 +16,7 @@ buttonObject.prototype = Object.create(gameObject.prototype);
 buttonObject.prototype.update = function(funcToCall, para){
     funcToCall(para);
 }
+//check if mouse hover
 buttonObject.prototype.hover = function(correctPosition){
     let pos = this.position
     let scale = this.scale || 1;
@@ -36,6 +38,7 @@ buttonObject.prototype.hover = function(correctPosition){
     }
     return false;
 }
+//check if mouse down in button
 buttonObject.prototype.hold = function(correctPosition){
     if(!this.hover(correctPosition)){
         return false;
@@ -45,6 +48,7 @@ buttonObject.prototype.hold = function(correctPosition){
     }
     return false;
 }
+//check if just clicked
 buttonObject.prototype.clicked = function(correctPosition){
     if(!this.hover(correctPosition)){
         return false;

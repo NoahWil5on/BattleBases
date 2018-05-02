@@ -1,3 +1,4 @@
+//constructor
 function textObject(text, position, color, align, font, size, stroke, strokeColor, strokeWidth){
     this.text = text;
     this.position = position;
@@ -10,6 +11,8 @@ function textObject(text, position, color, align, font, size, stroke, strokeColo
     this.strokeWidth = strokeWidth || 1;
 }
 textObject.prototype = Object.create(gameObject.prototype);
+
+//override gameobject draw to do text draw
 textObject.prototype.draw = function(ctx){
     ctx.save();
 
@@ -28,6 +31,8 @@ textObject.prototype.draw = function(ctx){
     ctx.textAlign = this.align;
     ctx.font = `${this.size}px ${this.font}`;
     ctx.fillText(`${this.text}`, 0, 0);
+
+    //do stroke if stroke
     if(this.stroke){
         ctx.strokeText(`${this.text}`, 0, 0);
     }

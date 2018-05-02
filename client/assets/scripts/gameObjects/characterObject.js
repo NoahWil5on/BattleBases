@@ -1,3 +1,4 @@
+//constructor
 function characterObject(name, position, speed, health, damage, value, ranged, range, scale, direction){
     this.imageNum = name;
     this.image = getCharacter(this.imageNum);
@@ -35,6 +36,7 @@ characterObject.prototype.update = function (dt) {
     if (this.alpha < 1) {
         this.alpha += 0.05;
     }
+    //ranged character?
     if(this.ranged){
         for(var i = this.bullets.length - 1; i >= 0; i--){
             this.bullets[i].update(dt);
@@ -42,6 +44,7 @@ characterObject.prototype.update = function (dt) {
             this.bullets.splice(i, 1);
         }
         this.fireTimer += dt;
+        //fire every 1/firerate seconds
         if(this.fireTimer > (1 / this.fireRate) && this.inRange){
             this.bullets.push(new bulletObject(
                 'char', 

@@ -14,6 +14,7 @@ app.over = {
     isDown: false,
     wasDown: false,
 
+    //set up win and lose screens
     init: function(){ 
         this.background = document.getElementById('background_gameover');        
         this.winText = new textObject(
@@ -39,11 +40,13 @@ app.over = {
         this.restartButton = new buttonObject (`menu?restart?`, {x, y}, 1);
         this.restartButtonActive = new buttonObject ('menu?restart?active', {x, y}, 1);
     },
+    //updatae reset button
     update: function (dt, ctx) {
         this.updateButtons();
         this.draw(ctx);
         this.isHover = false;
     },
+    //check for hover and click
     updateButtons: function(){
         this.isDown = this.restartButton.hold(true);
         this.isHover = this.restartButton.hover(true);
@@ -53,11 +56,14 @@ app.over = {
         this.wasDown = this.isDown;
     },
     draw: function(ctx){
+        //gameover background
         ctx.drawImage(this.background, -5, -30);
 
+        //if hover draw hoverImage else draw reg button
         if(this.isHover) {this.restartButtonActive.draw(ctx);}
         else {this.restartButton.draw(ctx);}
 
+        //draw proper win state
         if(this.win){
             this.winText.draw(ctx);
         }else{

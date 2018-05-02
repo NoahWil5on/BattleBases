@@ -112,6 +112,7 @@ app.main = {
         this.wasMouseDown = this.mouseDown;
         this.clicked = false;
     },
+    //do camera move in local space from  global space
     cameraMove: function(){
         if(this.mouse.x < 200){
             this.cameraPosition.x -= this.cameraSpeed * this.dt;
@@ -121,6 +122,7 @@ app.main = {
         }
         this.boundCamera();
     },
+    //prevent camera from going too far in any direction
     boundCamera: function(){
         if(this.cameraPosition.x < ((this.WIDTH / 2) - (this.worldSize.width / 2))){
             this.cameraPosition.x = ((this.WIDTH / 2) - (this.worldSize.width / 2));

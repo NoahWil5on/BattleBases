@@ -1,3 +1,4 @@
+//constructor
 function bulletObject(image, damage, rotation, velocity, position, speed, scale, direction){
     this.imageNum = image;
     this.image = getBullet(this.imageNum);
@@ -18,6 +19,8 @@ function bulletObject(image, damage, rotation, velocity, position, speed, scale,
     this.lifeTime = 0;
 }
 bulletObject.prototype = Object.create(gameObject.prototype);
+
+//follow trajectory
 bulletObject.prototype.update = function(dt){
     this.lifeTime += dt;
     if(!dt || dt === undefined || this.isColliding) return;

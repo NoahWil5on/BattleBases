@@ -25,15 +25,19 @@ const onMessage = (sock) => {
   socket.on('startGame', () => {
     socket.broadcast.to(`room${socket.room}`).emit('startGame', {});
   });
+  //tell host to make new character
   socket.on('createNewEnemyForHost', (data) => {
     socket.broadcast.to(`room${socket.room}`).emit('createNewEnemyForHost', data);
   });
+  //tell host to updgrade non-host base
   socket.on('upgradeBase', () => {
     socket.broadcast.to(`room${socket.room}`).emit('upgradeBase', {});
   });
+  //update the non-host
   socket.on('updateNonHost', (data) => {
     socket.broadcast.to(`room${socket.room}`).emit('updateNonHost', data);
   });
+  //end game
   socket.on('gameOver', (data) => {
     socket.broadcast.to(`room${socket.room}`).emit('gameOver', data);
     socket.broadcast.to(`room${socket.room}`).emit('disconnect', {});
@@ -56,6 +60,7 @@ const configure = (ioServer) => {
     const socket = sock;
     let host = false;
 
+    //route players into appropriate room
     const playersInRoom = getNumClients(`room${num}`);
     switch (playersInRoom) {
       case 0:

@@ -3,6 +3,8 @@
 var app = app || {};
 
 app.game = {
+
+    //game property values
     myCharacters: [],
     enemyCharacters: [],
 
@@ -42,6 +44,7 @@ app.game = {
     tankCostText: undefined,
     baseCostText: undefined,
 
+    //initialize game
     init: function () {
         //make base
         var base = getBase('01');
@@ -93,6 +96,7 @@ app.game = {
             .521,     //scale
             -1);     //flip direction
 
+            //set up stats for base leveles
         this.baseLevelStats[1] = {
             baseImage: getBase('02'),
             turretImage: getTurret('02'),
@@ -109,6 +113,7 @@ app.game = {
             damage: 9,
             fireRate: 1.5,
         }
+        //set up stats for each character at each level
         this.characterStats[0] = {
             reg: {
                 health: 25,
@@ -198,6 +203,7 @@ app.game = {
             x: 350, y: 105
         };
 
+        //make all in game buttons
         this.makeCharacterButton = new buttonObject(
             "char?reg?",		//image
             charButtonPos,
@@ -234,6 +240,7 @@ app.game = {
             },
             .521);
 
+            //display your currency
         this.currencyText = new textObject(
             `${this.myCurrency}`,    //text
             {
@@ -245,6 +252,7 @@ app.game = {
             'LuckiestGuy',                       //font
             '28'                               //size
         );
+        //cost of each item in shop
         this.regCostText = new textObject(
             `${this.charRegCost}`,    //text
             {
@@ -316,6 +324,7 @@ app.game = {
             2                                 //size
         );
     },
+    //update all game objects
     update: function (dt, ctx) {
         this.updateButtons();
         if (app.main.host) {
@@ -334,6 +343,7 @@ app.game = {
         }
         this.draw(ctx);
     },
+    //called if host
     updateCharacters: function (dt) {
         for (var i = 0; i < this.myCharacters.length; i++) {
             this.myCharacters[i].update(dt);
@@ -345,23 +355,21 @@ app.game = {
 
         //console.log(this.enemyCharacters);
     },
+    //update prev position for lerping
     updatePositions: function () {
         for (var i = 0; i < this.myCharacters.length; i++) {
             const myChar = this.myCharacters[i];
 
             //assign previous positions to last positions
             this.myCharacters[i].prevPosition = myChar.position;
-
-            //update destPosition
-
-
-            //reset alpha - no
-            //myChar.alpha = 0.05;
         }
     },
+    //check for button clicks
     updateButtons: function () {
         if (this.upgradeBaseButton.clicked(true)) {
             if (app.main.host) {
+
+                //level up base and base stats
                 if (this.myBase.level >= 3 || this.myCurrency - this.baseCost[this.myBase.level] < 0) return;
                 this.myCurrency -= this.baseCost[this.myBase.level];
                 this.myBase.level++;
@@ -387,6 +395,7 @@ app.game = {
                 }
             }
         }
+        //make regular character
         if (this.makeCharacterButton.clicked(true)) {
             if (app.main.host) {
                 if (this.myCurrency - this.charRegCost < 0) return;
@@ -411,6 +420,7 @@ app.game = {
                 sendHostNewCharacter(1);
             }
         }
+        //make ranged character
         if (this.makeRangedCharButton.clicked(true)) {
             if (app.main.host) {
                 if (this.myCurrency - this.charRangeCost < 0) return;
@@ -435,6 +445,7 @@ app.game = {
                 sendHostNewCharacter(2);
             }
         }
+        //make speedy character
         if (this.makeSpeedCharButton.clicked(true)) {
             if (app.main.host) {
                 if (this.myCurrency - this.charSpeedCost < 0) return;
@@ -459,6 +470,7 @@ app.game = {
                 sendHostNewCharacter(3);
             }
         }
+        //make tanky character
         if (this.makeBigCharButton.clicked(true)) {
             if (app.main.host) {
                 if (this.myCurrency - this.charTankCost < 0) return;
@@ -484,6 +496,7 @@ app.game = {
             }
         }
     },
+    //do all collision checks
     updateCollisions: function (dt) {
         //my players vs enemy players
         //my players vs enmey base
@@ -498,6 +511,7 @@ app.game = {
         //emit new list to other client
     },
     checkPlayerBullets: function () {
+        //check enemy characters against my bullets
         for (var i = this.enemyCharacters.length - 1; i >= 0; i--) {
             for (var j = this.myTurret.bullets.length - 1; j >= 0; j--) {
                 var box = {
@@ -520,6 +534,7 @@ app.game = {
                 }
             }
         }
+        //check my characters against enemy bulelts
         for (var i = this.myCharacters.length - 1; i >= 0; i--) {
             for (var j = this.enemyTurret.bullets.length - 1; j >= 0; j--) {
                 var box = {
@@ -543,6 +558,7 @@ app.game = {
             }
         }
     },
+    //check player player collisions
     checkPlayerCollisions: function (dt) {
         //reset collisions
         for (var i = this.myCharacters.length - 1; i >= 0; i--) {
@@ -558,6 +574,7 @@ app.game = {
                 y: this.enemyBase.position.y}, this.myCharacters[i].position) < this.myCharacters[i].range){
                 this.myCharacters[i].inRange = true;
             }
+            //check for collions with my character bullets and enemies
             for(var j = this.myCharacters[i].bullets.length - 1; j >= 0; j--){
                 var destroyed = false;
                 for(var n = this.enemyCharacters.length - 1; n >= 0; n--){
@@ -573,6 +590,7 @@ app.game = {
                     }
                 }
                 if(destroyed) continue;
+                //check for collions with bases
                 if(HorizontalCollision(this.enemyBase, this.myCharacters[i].bullets[j])){
                     this.enemyBase.health -= this.myCharacters[i].bullets[j].damage;
                     this.myCharacters[i].bullets.splice(j, 1);
@@ -583,6 +601,7 @@ app.game = {
                 }
             }
         }
+        //reset enemy collions
         for (var n = this.enemyCharacters.length - 1; n >= 0; n--) {
             this.enemyCharacters[n].isColliding = false;
             this.enemyCharacters[n].inRange = false;
@@ -596,6 +615,7 @@ app.game = {
                 y: this.myBase.position.y}, this.enemyCharacters[n].position) < this.enemyCharacters[n].range){
                 this.enemyCharacters[n].inRange = true;
             }
+            //check for collions with enemy bullets and my characters
             for(var j = this.enemyCharacters[n].bullets.length - 1; j >= 0; j--){
                 var destroyed = false;
                 for (var i = this.myCharacters.length - 1; i >= 0; i--) {
@@ -612,6 +632,7 @@ app.game = {
                     }
                 }
                 if(destroyed) continue;
+                //check for collision with enemy bullets and my base
                 if(HorizontalCollision(this.myBase, this.enemyCharacters[n].bullets[j])){
                     this.myBase.health -= this.enemyCharacters[n].bullets[j].damage;
                     this.enemyCharacters[n].bullets.splice(j, 1);
@@ -624,6 +645,7 @@ app.game = {
         }
         for (var i = this.myCharacters.length - 1; i >= 0; i--) {
             for (var n = this.enemyCharacters.length - 1; n >= 0; n--) {
+                //check if ranged characters are in range of thing to shoot
                 if(this.myCharacters[i].ranged){
                     if(getMagnitude2(this.enemyCharacters[n].position, this.myCharacters[i].position)
                     < this.myCharacters[i].range){
@@ -631,6 +653,7 @@ app.game = {
                         this.myCharacters[i].isColliding = true;
                     }
                 }
+                //check if enemy ranged units are in range of thing to shoot
                 if(this.enemyCharacters[n].ranged){
                     if(getMagnitude2(this.enemyCharacters[n].position, this.myCharacters[i].position)
                     < this.enemyCharacters[n].range){
@@ -643,6 +666,7 @@ app.game = {
                     this.myCharacters[i].isColliding = true;
                     this.enemyCharacters[n].isColliding = true;
 
+                    //deal damage
                     if(!this.enemyCharacters[n].ranged){
                         this.myCharacters[i].health -= this.enemyCharacters[n].damage * dt;
                     }
@@ -650,6 +674,7 @@ app.game = {
                         this.enemyCharacters[n].health -= this.myCharacters[i].damage * dt;
                     }
 
+                    //check for death
                     if (this.myCharacters[i].health <= 0) {
                         this.enemyCurrency += this.myCharacters[i].value;
                         this.myCharacters.splice(i, 1);
@@ -663,6 +688,7 @@ app.game = {
             }
         }
     },
+    //check players colliding with base
     checkBaseCollisions: function (dt) {
         for (var i = 0; i < this.myCharacters.length; i++) {
             //Players colliding with enemy Base
@@ -696,24 +722,7 @@ app.game = {
             }
         }
     },
-    // checkPlayersInTurretRange: function() {
-    //     for (var i = 0; i < this.myCharacters.length; i++) {
-    //         //My players in range of enemy turrets, and does not already exist in the Target array
-    //         if (this.myCharacters[i].position.x > (this.enemyBase.position.x - 300)) {
-    //             console.log("Friendly in enemy turret range");
-    //         }
-    //     }
-    //     for (var n = 0; n < this.enemyCharacters.length; n++) {
-    //         if (this.enemyCharacters[n].position.x < (this.myBase.position.x + 300)) {
-    //             console.log("Enemy in friendly turret range");
-    //         }
-    //     }
-    // },
-    // checkTurretCollisions: function() {
-
-    // },
-    //currently delete characters when they get off screen
-    //will be used to handle deaths
+    //bound players to screen
     managePlayers: function () {
         for (var i = 0; i < this.myCharacters.length; i++) {
             if (this.myCharacters[i].position.x > 800) {
@@ -731,8 +740,10 @@ app.game = {
             }
         }
     },
+    //call all draw calls
     draw: function (ctx) {
         var background = document.getElementById('background');
+        //draw our background image
         ctx.drawImage(
             background,
             -background.width / 2, -background.height / 2
@@ -750,6 +761,7 @@ app.game = {
             this.myTurret.drawBullets(ctx);
             this.enemyTurret.drawBullets(ctx, true);
         } else {
+            //non-host objects have no draw function, use prebuilt function in this.js
             for (var i = 0; i < this.myBullets.length; i++) {
                 this.doNonHostDraw(ctx, this.myBullets[i], getBullet(this.myBullets[i].imageNum), false, true);
             }
@@ -760,6 +772,8 @@ app.game = {
 
         this.myTurret.draw(ctx);
         this.enemyTurret.draw(ctx, true);
+
+        //debug square
         // ctx.save();
         // ctx.fillStyle = '#f00'
         // ctx.fillRect(
@@ -769,16 +783,9 @@ app.game = {
         // );
         // ctx.restore();
     },
+    //draw characters and their bullets 
     drawCharacters: function (ctx) {
         for (var i = 0; i < this.myCharacters.length; i++) {
-            /*
-            if (this.myCharacters[i].alpha < 1) {
-                this.myCharacters[i].alpha += 0.05;
-            }
-
-            this.myCharacters[i].position.x = lerp(this.myCharacters[i].prevPosition.x, this.myCharacters[i].destPosition.x, this.myCharacters[i].alpha);
-            //console.log(this.position.x);
-            //this.position.y = lerp(this.prevPosition.y, this.destPosition.y, this.alpha);*/
             if(this.myCharacters[i].ranged) this.myCharacters[i].drawBullets(ctx);
             this.myCharacters[i].draw(ctx);
         }
@@ -806,6 +813,7 @@ app.game = {
             }
         }
     },
+    //prebuilt draw function for non-host who has no draw functions attached to their objects
     doNonHostDraw(ctx, obj, image, flip, vertFlip) {
         ctx.save();
 
@@ -875,6 +883,7 @@ app.game = {
             if (baseOverride) this.baseCostText.draw(ctx);
         }
 
+        //draw HUD
         ctx.save();
         ctx.scale(.521, .521);
         ctx.drawImage(
@@ -882,8 +891,12 @@ app.game = {
             -14, -55
         );
         ctx.restore();
+
+        //draw players health
         this.myBase.drawHealth(ctx);
         this.enemyBase.drawHealth(ctx, true);
+
+        //update and draw currency
         this.currencyText.text = `${this.myCurrency}`;
         this.currencyText.draw(ctx);
     }

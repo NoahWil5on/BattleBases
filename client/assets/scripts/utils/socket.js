@@ -14,22 +14,12 @@ function joinServer(){
             app.main.currentGameState = app.main.gameState.GAME;
             socket.emit('startGame', {});
         }
-        //have host update character every 20ms
-        // if (app.main.host) {
-        //     console.log("HOST");
-        //     setInterval(sendCharacterList, 1000);
-        // }
     });
+    //begin game
     socket.on('startGame', () => {
         app.main.currentGameState = app.main.gameState.GAME
     });
-    // socket.on('updatePlayerInfo', (data) => {
-    //     app.game.enemyCharacters = data.characters;
-    //     //For each of these enemy characters, change their direction to -1
-    //     for (var i = 0; i < data.characters.length; i++) {
-    //         app.game.enemyCharacters[i].direction = -1;
-    //     }
-    // });
+    //do upgrade base and stats on host side
     socket.on('upgradeBase', () => {
         console.log('here');
         if(app.game.enemyBase.level < 3 && app.game.enemyCurrency - app.game.baseCost[app.game.enemyBase.level] >= 0){
@@ -49,7 +39,9 @@ function joinServer(){
             app.game.enemyTurret.height = app.game.enemyTurret.imageHeight * app.game.enemyTurret.scale;
         }
     });
+    //host creates new enemy when requested by non-host
     socket.on('createNewEnemyForHost', (data) => {
+        //set up stats
         var enemyStats = app.game.characterStats[app.game.enemyBase.level - 1];
         var img = `reg?0${app.game.enemyBase.level}`;
         var health = enemyStats.reg.health;
@@ -93,7 +85,7 @@ function joinServer(){
         }
 
 
-        //negative because base needs to be flipped?
+        //can we afford it?
         if(app.game.enemyCurrency - cost < 0) return;
         app.game.enemyCurrency -= cost;
         var charPos = JSON.parse(JSON.stringify(app.game.enemyBase.position))
@@ -114,14 +106,16 @@ function joinServer(){
         //console.log(app.game.enemyCharacters);
     });
 
+    //updates all non-host information
     socket.on('updateNonHost', (data) => {       
 
-        //app.game.myCharacters = data.myCharacters;
+        //upgrade base level and stats if base is upgrades
         if(app.game.enemyBase.level != data.enemyBase.level){
             var upgradeInfo = upgradeBase(app.game.enemyBase, app.game.enemyTurret, data.enemyBase);
             app.game.enemyBase = upgradeInfo.base;
             app.game.enemyTurret = upgradeInfo.turret;
         }
+        //update base level and stats if base is upgraded
         if(app.game.myBase.level != data.myBase.level){
             var newInfo = upgradeBase(app.game.myBase, app.game.myTurret, data.myBase);
             app.game.myBase = newInfo.base;
@@ -130,23 +124,28 @@ function joinServer(){
             app.game.upgradeBaseButton.image = getButton(`base?0${newInfo.base.level + 1}?`);
         }
 
+        //lerp enemies and bullets
         app.game.enemyCharacters = lerpData(app.game.enemyCharacters,data.enemies);
         app.game.myCharacters = lerpData(app.game.myCharacters,data.myCharacters);
         app.game.myBullets = lerpData(app.game.myBullets, data.myBullets);
         app.game.enemyBullets = lerpData(app.game.enemyBullets, data.enemyBullets);
 
+        //lerp rotation values
         app.game.myTurret.rotation = lerp(app.game.myTurret.rotation, data.myTurretRotation, .2);
         app.game.enemyTurret.rotation = lerp(app.game.enemyTurret.rotation, data.enemyTurretRotation, .2);
 
+        //update health and currency information
         app.game.myBase.health = data.myBase.health;
         app.game.enemyBase.health = data.enemyBase.health;
         app.game.myCurrency = data.myCurrency;
     });
+    //send to gameover scene
     socket.on('gameOver', (data) => {
         app.over.win = data.win;
         app.main.currentGameState = app.main.gameState.OVER;
     });
 }
+//do upgrade base and stats
 function upgradeBase(base, turret, data){
     base.level = data.level
     var level = base.level;
@@ -164,19 +163,24 @@ function upgradeBase(base, turret, data){
 
     return {base, turret};
 }
+//do send gameover
 function sendOver(win){
     socket.emit('gameOver', {win: win});
     app.over.win = !win;
     app.main.currentGameState = app.main.gameState.OVER;
 }
+//do create new character
+//data: type of character enum
 function sendHostNewCharacter(data) {
     //send type of character created.
     socket.emit('createNewEnemyForHost', data);
 }
+//do upgrade base
 function sendHostUpgradeBase() {
     //send type of character created.
     socket.emit('upgradeBase', {});
 }
+//send all the information from host to client
 function sendCharacterList() {
     //Send the new list every 20 ms, flipping the characters
     //console.log(app.game.myCharacters);
@@ -196,6 +200,7 @@ function sendCharacterList() {
     }));
 }
 
+//do lerp data
 function lerpData(myListArray, dataListArray) {
     var myList = myListArray;
     var dataList = dataListArray;
@@ -232,6 +237,7 @@ function lerpData(myListArray, dataListArray) {
     return myList;
 }
 
+//start application
 function init(){
     app.main.init();
 }

@@ -1,3 +1,4 @@
+//constructor
 function baseObject(image, position, scale){
     this.imageNum = image;
     this.image = getBase(this.imageNum);
@@ -13,6 +14,8 @@ function baseObject(image, position, scale){
     this.level = 1;
 }
 baseObject.prototype = Object.create(gameObject.prototype);
+
+//apply damage
 baseObject.prototype.takeDamage = function(damage){
 	//If the character is colliding with another character, he shouldnt move.
     if(!damage || damage === undefined) return;
@@ -22,7 +25,7 @@ baseObject.prototype.AddTurret = function () {
     this.turretCount++;
     //place a turret, y coordinate dependent on the count
 }
-
+//draw the health in UI
 baseObject.prototype.drawHealth = function (ctx, enemy) {
     ctx.save();
 
