@@ -1,10 +1,13 @@
-function textObject(text, position, color, align, font, size){
+function textObject(text, position, color, align, font, size, stroke, strokeColor, strokeWidth){
     this.text = text;
     this.position = position;
     this.font = font || 'serif';
     this.size = size || '12';
     this.align = align || 'center';
     this.color = color || '#000';
+    this.stroke = stroke || false;
+    this.strokeColor = strokeColor || "#000";
+    this.strokeWidth = strokeWidth || 1;
 }
 textObject.prototype = Object.create(gameObject.prototype);
 textObject.prototype.draw = function(ctx){
@@ -19,10 +22,15 @@ textObject.prototype.draw = function(ctx){
     ctx.scale(scale,scale);
     ctx.translate(this.position.x / scale, this.position.y / scale );
     ctx.fillStyle = this.color;
+    ctx.strokeStyle = this.strokeColor;
+    ctx.lineWidth = this.strokeWidth;
 
     ctx.textAlign = this.align;
     ctx.font = `${this.size}px ${this.font}`;
     ctx.fillText(`${this.text}`, 0, 0);
+    if(this.stroke){
+        ctx.strokeText(`${this.text}`, 0, 0);
+    }
 
     ctx.restore();
 }

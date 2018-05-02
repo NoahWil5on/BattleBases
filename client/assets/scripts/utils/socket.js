@@ -30,33 +30,56 @@ function joinServer(){
     //         app.game.enemyCharacters[i].direction = -1;
     //     }
     // });
+    socket.on('upgradeBase', () => {
+        console.log('here');
+        if(app.game.enemyBase.level < 3 && app.game.enemyCurrency - app.game.baseCost[app.game.enemyBase.level] >= 0){
+            app.game.enemyCurrency -= app.game.baseCost[app.game.enemyBase.level];
+            app.game.enemyBase.level++;
+            var level = app.game.enemyBase.level;
+            var stats = app.game.baseLevelStats;
+            app.game.enemyBase.image = stats[level - 1].baseImage;
+            app.game.enemyTurret.image = stats[level - 1].turretImage;
+            app.game.enemyTurret.bulletType = stats[level - 1].bulletType;
+            app.game.enemyTurret.range = stats[level - 1].range;
+            app.game.enemyTurret.damage = stats[level - 1].damage;
+            app.game.enemyTurret.fireRate = stats[level - 1].fireRate;
+            app.game.enemyTurret.imageWidth = app.game.enemyTurret.image.width;
+            app.game.enemyTurret.imageHeight = app.game.enemyTurret.image.height;
+            app.game.enemyTurret.width = app.game.enemyTurret.imageWidth * app.game.enemyTurret.scale;
+            app.game.enemyTurret.height = app.game.enemyTurret.imageHeight * app.game.enemyTurret.scale;
+        }
+    });
     socket.on('createNewEnemyForHost', (data) => {
-        var img = `reg?0${this.enemyBase.level}`;
+        var img = `reg?0${app.game.enemyBase.level}`;
         var health = 25;
         var damage = 10;
         var speed = 100;
         var cost = 10;
+        var value = 8;
 
         //ranged
         if (data == 2) {
-            img = `range?0${this.enemyBase.level}`;
-            health = 20;
+            img = `range?0${app.game.enemyBase.level}`;
+            health = 15;
             damage = 15;
+            cost = 12;
             speed = 100;
             cost = app.game.charRangeCost;
         }//speed
         if (data == 3) {
-            img = `speed?0${this.enemyBase.level}`;
+            img = `speed?0${app.game.enemyBase.level}`;
             health = 15;
             damage = 15;
-            speed = 150;
+            speed = 175;
+            value = 5;
             cost = app.game.charSpeedCost;
         }//big boi
         if (data == 4) {
-            img = `tank?0${this.enemyBase.level}`;
+            img = `tank?0${app.game.enemyBase.level}`;
             health = 80;
             damage = 20;
-            speed = 70;
+            speed = 60;
+            value = 25;
             cost = app.game.charTankCost;
         }
 
@@ -72,7 +95,8 @@ function joinServer(){
             speed,
             health, //health
             damage, //damage
-            .15,
+            value,
+            .521,
             -1
         ));
 
@@ -113,9 +137,21 @@ function joinServer(){
         
 
         //app.game.myCharacters = data.myCharacters;
+        if(app.game.enemyBase.level != data.enemyBase.level){
+            var upgradeInfo = upgradeBase(app.game.enemyBase, app.game.enemyTurret, data.enemyBase);
+            app.game.enemyBase = upgradeInfo.base;
+            app.game.enemyTurret = upgradeInfo.turret;
+        }
+        if(app.game.myBase.level != data.myBase.level){
+            var newInfo = upgradeBase(app.game.myBase, app.game.myTurret, data.myBase);
+            app.game.myBase = newInfo.base;
+            app.game.myTurret = newInfo.turret;
+            app.game.baseCostText.text = app.game.baseCost[newInfo.base.level];
+            app.game.upgradeBaseButton.image = getButton(`base?0${newInfo.base.level + 1}?`);
+        }
         app.game.enemyCharacters = data.enemies;
-        app.game.myBase.health = data.myHealth;
-        app.game.enemyBase.health = data.enemyHealth;
+        app.game.myBase.health = data.myBase.health;
+        app.game.enemyBase.health = data.enemyBase.health;
         app.game.myTurret.rotation = data.myTurretRotation;
         app.game.enemyTurret.rotation = data.enemyTurretRotation;
         app.game.myBullets = data.myBullets;
@@ -127,6 +163,23 @@ function joinServer(){
         app.main.currentGameState = app.main.gameState.OVER;
     })
 }
+function upgradeBase(base, turret, data){
+    base.level = data.level
+    var level = base.level;
+    var stats = app.game.baseLevelStats;
+    base.image = stats[level - 1].baseImage;
+    turret.image = stats[level - 1].turretImage;
+    turret.bulletType = stats[level - 1].bulletType;
+    turret.range = stats[level - 1].range;
+    turret.damage = stats[level - 1].damage;
+    turret.fireRate = stats[level - 1].fireRate;
+    turret.imageWidth = turret.image.width;
+    turret.imageHeight = turret.image.height;
+    turret.width = turret.imageWidth * turret.scale;
+    turret.height = turret.imageHeight * turret.scale;
+
+    return {base, turret};
+}
 function sendOver(win){
     socket.emit('gameOver', {win: win});
     app.over.win = !win;
@@ -135,6 +188,10 @@ function sendOver(win){
 function sendHostNewCharacter(data) {
     //send type of character created.
     socket.emit('createNewEnemyForHost', data);
+}
+function sendHostUpgradeBase() {
+    //send type of character created.
+    socket.emit('upgradeBase', {});
 }
 function sendCharacterList() {
     //Send the new list every 20 ms, flipping the characters
@@ -145,8 +202,8 @@ function sendCharacterList() {
     socket.emit('updateNonHost', ({
         enemies: app.game.myCharacters,
         myCharacters: app.game.enemyCharacters,
-        myHealth: app.game.enemyBase.health,
-        enemyHealth: app.game.myBase.health,
+        myBase: app.game.enemyBase,
+        enemyBase: app.game.myBase,
         myBullets: app.game.enemyTurret.bullets,
         myTurretRotation: app.game.enemyTurret.rotation,
         enemyBullets: app.game.myTurret.bullets,

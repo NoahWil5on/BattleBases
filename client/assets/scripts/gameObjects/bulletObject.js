@@ -5,7 +5,7 @@ function bulletObject(image, damage, rotation, velocity, position, speed, scale,
     this.imageHeight = this.image.height;
     this.width = this.imageWidth * scale;
     this.height = this.imageHeight * scale;
-    this.position = position;  
+    this.position = position
     this.rotation = 0;
     this.speed = speed || 0;
     this.direction = direction || 1;   

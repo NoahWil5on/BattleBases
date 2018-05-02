@@ -28,6 +28,9 @@ const onMessage = (sock) => {
   socket.on('createNewEnemyForHost', (data) => {
     socket.broadcast.to(`room${socket.room}`).emit('createNewEnemyForHost', data);
   });
+  socket.on('upgradeBase', () => {
+    socket.broadcast.to(`room${socket.room}`).emit('upgradeBase', {});
+  });
   socket.on('updateNonHost', (data) => {
     socket.broadcast.to(`room${socket.room}`).emit('updateNonHost', data);
   });
