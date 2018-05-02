@@ -13,7 +13,7 @@ app.main = {
     dt: 0,
     lastUpdate: Date.now(),
     cameraPosition: {x: -100000, y: 0},
-    cameraSpeed: 200,
+    cameraSpeed: 300,
     gameState: {
         START: 0,
         LOBBY: 1,
@@ -32,7 +32,7 @@ app.main = {
     init: function(player){
         this.currentGameState = this.gameState.START;
         this.worldSize = {
-            width: 1200,
+            width: 1600,
             height: 600,
         }
 
