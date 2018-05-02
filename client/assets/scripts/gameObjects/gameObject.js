@@ -11,7 +11,11 @@ function gameObject(image, position){
     this.height = this.imageHeight * scale;
     this.position = position;
 };
-gameObject.prototype.draw = function(ctx, flip){
+gameObject.prototype.draw = function(ctx, flip, override){
+    var image = this.image
+    if(override){
+        image = document.getElementById(override);
+    }
     ctx.save();
 
     //not all objects will have rotation, if not then set rotation to 0
@@ -28,7 +32,7 @@ gameObject.prototype.draw = function(ctx, flip){
     ctx.rotate(rot);
 
     ctx.drawImage(
-        this.image,
+        image,
         -(this.imageWidth / 2),
         -(this.imageHeight / 2)
     );

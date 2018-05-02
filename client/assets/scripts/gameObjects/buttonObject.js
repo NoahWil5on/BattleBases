@@ -1,5 +1,5 @@
-function buttonObject(image, position, scale){
-    this.imageNum = image,
+function buttonObject(name, position, scale){
+    this.imageNum = name,
     this.image = getButton(this.imageNum);
     this.imageWidth = this.image.width;
     this.imageHeight = this.image.height;

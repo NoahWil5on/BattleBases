@@ -1,5 +1,5 @@
-function characterObject(image, position, speed, health, damage, scale, direction){
-    this.imageNum = image;
+function characterObject(name, position, speed, health, damage, scale, direction){
+    this.imageNum = name;
     this.image = getCharacter(this.imageNum);
     this.imageWidth = this.image.width;
     this.imageHeight = this.image.height;

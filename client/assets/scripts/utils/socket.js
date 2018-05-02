@@ -31,39 +31,43 @@ function joinServer(){
     //     }
     // });
     socket.on('createNewEnemyForHost', (data) => {
-        var img = '01';
+        var img = `reg?0${this.enemyBase.level}`;
         var health = 25;
         var damage = 10;
         var speed = 100;
+        var cost = 10;
 
         //ranged
         if (data == 2) {
-            img = '02';
+            img = `range?0${this.enemyBase.level}`;
             health = 20;
             damage = 15;
             speed = 100;
+            cost = app.game.charRangeCost;
         }//speed
         if (data == 3) {
-            img = '03';
+            img = `speed?0${this.enemyBase.level}`;
             health = 15;
             damage = 15;
             speed = 150;
+            cost = app.game.charSpeedCost;
         }//big boi
         if (data == 4) {
-            img = '04';
+            img = `tank?0${this.enemyBase.level}`;
             health = 80;
             damage = 20;
             speed = 70;
+            cost = app.game.charTankCost;
         }
 
 
         //negative because base needs to be flipped?
-        if(app.game.enemyCurrency - 10 < 0) return;
-        app.game.enemyCurrency -= 10;
+        if(app.game.enemyCurrency - cost < 0) return;
+        app.game.enemyCurrency -= cost;
         var charPos = JSON.parse(JSON.stringify(app.game.enemyBase.position))
         charPos.y += 20;
         app.game.enemyCharacters.push(new characterObject(
-            '01',
+            img,
             charPos,
             speed,
             health, //health

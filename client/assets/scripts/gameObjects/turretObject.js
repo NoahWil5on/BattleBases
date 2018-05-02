@@ -49,7 +49,7 @@ turretObject.prototype.update = function(dt, characterList){
                     y: position.y + vector.y * 55
                 }, 
                 200,    //bullet speed
-                .05,     //scale
+                .521,     //scale
                 this.direction));
             this.fireTimer = 0;
         }

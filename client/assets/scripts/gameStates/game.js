@@ -26,26 +26,36 @@ app.game = {
     currencyText: undefined,
     currencyCounter: 0,
 
+    charRegCost: 10,
+    charSpeedCost: 8,
+    charRangeCost: 15,
+    charTankCost: 30,
+
+    regCostText: undefined,
+    speedCostText: undefined,
+    rangeCostText: undefined,
+    tankCostText: undefined,
+
     init: function(){
         //make base
-        var base = getGeneralObject('base');
+        var base = getBase('01');
         var basePos = {
-            x: ((base.width / 2) * .5) - (app.main.worldSize.width / 2),
+            x: ((base.width / 2) * .5) - (app.main.worldSize.width / 2) - 50,
             y: 100
         };
         var enemyBasePos = {
-            x: ((base.width / 2) * .5) - (app.main.worldSize.width / 2),
+            x: ((base.width / 2) * .5) - (app.main.worldSize.width / 2) - 50,
             y: 100}; 
         enemyBasePos.x *= -1;
         this.myBase = new baseObject(
-            'base',
+            '01',
             basePos,
-            .5
+            .521
         );
         this.enemyBase = new baseObject(
-            'base',
+            '01',
             enemyBasePos,
-            .5
+            .521
         )
 
         //make turret
@@ -58,7 +68,7 @@ app.game = {
             {   x: this.myBase.position.x,
                 y: this.myBase.position.y - 100},   //position
             0,      //rotation
-            .5,     //scale
+            .521,     //scale
             1);     //flip direction
         this.enemyTurret = new turretObject(
             '01',   //turret
@@ -69,55 +79,89 @@ app.game = {
             {   x: this.enemyBase.position.x,
                 y: this.enemyBase.position.y - 100},   //position
             0,      //rotation
-            .5,     //scale
+            .521,     //scale
             -1);     //flip direction
 
         //button stuff
-        var button = getButton("01");
+        var button = getButton("char?reg?");
         //adjusting position for scale I'll be doing to this object
         var charButtonPos = {
-            x: (button.width / 2) * .1,
-            y: (button.height / 2) * .1}; 
+            x: 350, y: 105}; 
 
 		this.makeCharacterButton = new buttonObject (
-			'01',		//image
+			"char?reg?",		//image
             charButtonPos,
-            .1);	    //position
+            .521);	    //position
+            
+        this.makeSpeedCharButton = new buttonObject(
+            "char?speed?",
+            {
+                x: (charButtonPos.x) + (75 * 1),
+                y: (charButtonPos.y),
+            },
+            .521);
 
         this.makeRangedCharButton = new buttonObject(
-            '01',
+            "char?range?",
             {
-                x: (button.width / 2) * .1,
-                y: (button.height / 2) * .3
+                x: (charButtonPos.x) + (75 * 2),
+                y: (charButtonPos.y),
             },
-            .1);
-
-        this.makeSpeedCharButton = new buttonObject(
-            '01',
-            {
-                x: (button.width / 2) * .1,
-                y: (button.height / 2) * .5
-            },
-            .1);
+            .521);
 
         this.makeBigCharButton = new buttonObject(
-            '01',
+            "char?tank?",
             {
-                x: (button.width / 2) * .1,
-                y: (button.height / 2) * .7
+                x: (charButtonPos.x) + (75 * 3),
+                y: (charButtonPos.y),
             },
-            .1);
+            .521);
 
         this.currencyText = new textObject(
             `${this.myCurrency}`,    //text
-            {x: 80,             //position
-            y: 50},
+            {x: 200,             //position
+            y: 85},
             '#000',                             //color
             'left',                           //text align
-            'sans-serif',                       //font
+            'LuckiestGuy',                       //font
             '28'                                //size
         );
-
+        this.regCostText = new textObject(
+            `${this.charRegCost}`,    //text
+            {x: this.makeCharacterButton.position.x,             //position
+            y: this.makeCharacterButton.position.y+10},
+            '#000',                             //color
+            'center',                           //text align
+            'LuckiestGuy',                       //font
+            '28'                                //size
+        );
+        this.speedCostText = new textObject(
+            `${this.charSpeedCost}`,    //text
+            {x: this.makeSpeedCharButton.position.x,             //position
+            y: this.makeSpeedCharButton.position.y+10},
+            '#000',                             //color
+            'center',                           //text align
+            'LuckiestGuy',                       //font
+            '28'                                //size
+        );
+        this.rangeCostText = new textObject(
+            `${this.charRangeCost}`,    //text
+            {x: this.makeRangedCharButton.position.x,             //position
+            y: this.makeRangedCharButton.position.y+10},
+            '#000',                             //color
+            'center',                           //text align
+            'LuckiestGuy',                       //font
+            '28'                                //size
+        );
+        this.tankCostText = new textObject(
+            `${this.charTankCost}`,    //text
+            {x: this.makeBigCharButton.position.x,             //position
+            y: this.makeBigCharButton.position.y+10},
+            '#000',                             //color
+            'center',                           //text align
+            'LuckiestGuy',                       //font
+            '28'                                //size
+        );
     },
     update: function(dt, ctx){
         this.updateButtons();
@@ -165,17 +209,17 @@ app.game = {
     updateButtons: function(){
         if (this.makeCharacterButton.clicked(true)) {
             if (app.main.host) {
-                if(this.myCurrency - 10 < 0) return;
-                this.myCurrency -= 10;
+                if(this.myCurrency - this.charRegCost < 0) return;
+                this.myCurrency -= this.charRegCost;
                 var charPos = JSON.parse(JSON.stringify(this.myBase.position))
                 charPos.y += 20;
                 this.myCharacters.push(new characterObject(
-                    '01',
+                    `reg?0${this.myBase.level}`,
                     charPos,
                     100,
                     25, //health
                     10, //damage
-                    .15,
+                    .521,
                     1
                 ));
             } else {
@@ -186,17 +230,17 @@ app.game = {
         }
         if (this.makeRangedCharButton.clicked(true)) {
             if (app.main.host) {
-                if (this.myCurrency - 15 < 0) return;
-                this.myCurrency -= 15;
+                if (this.myCurrency - this.charRangeCost < 0) return;
+                this.myCurrency -= this.charRangeCost;
                 var charPos = JSON.parse(JSON.stringify(this.myBase.position))
                 charPos.y += 20;
                 this.myCharacters.push(new characterObject(
-                    '01',
+                    `range?0${this.myBase.level}`,
                     charPos,
                     100,
                     20, //health
                     15, //damage
-                    .15,
+                    .521,
                     1
                 ));
             } else {
@@ -207,17 +251,17 @@ app.game = {
         }
         if (this.makeSpeedCharButton.clicked(true)) {
             if (app.main.host) {
-                if (this.myCurrency - 8 < 0) return;
-                this.myCurrency -= 8;
+                if (this.myCurrency - this.charSpeedCost < 0) return;
+                this.myCurrency -= this.charSpeedCost;
                 var charPos = JSON.parse(JSON.stringify(this.myBase.position))
                 charPos.y += 20;
                 this.myCharacters.push(new characterObject(
-                    '01',
+                    `speed?0${this.myBase.level}`,
                     charPos,
                     150,
                     15, //health
                     15, //damage
-                    .15,
+                    .521,
                     1
                 ));
             } else {
@@ -228,17 +272,17 @@ app.game = {
         }
         if (this.makeBigCharButton.clicked(true)) {
             if (app.main.host) {
-                if (this.myCurrency - 30 < 0) return;
-                this.myCurrency -= 30;
+                if (this.myCurrency - this.charTankCost < 0) return;
+                this.myCurrency -= this.charTankCost;
                 var charPos = JSON.parse(JSON.stringify(this.myBase.position))
                 charPos.y += 20;
                 this.myCharacters.push(new characterObject(
-                    '01',
+                    `tank?0${this.myBase.level}`,
                     charPos,
                     70,
                     80, //health
                     20, //damage
-                    .15,
+                    .521,
                     1
                 ));
             } else {
@@ -416,6 +460,11 @@ app.game = {
         }
     },
     draw: function(ctx){
+        var background = document.getElementById('background');
+        ctx.drawImage(
+            background,
+            -background.width / 2,-background.height / 2
+        );
         if(!app.main.host){
             this.drawHostCharacters(ctx);
         }else{
@@ -424,9 +473,6 @@ app.game = {
 
         this.myBase.draw(ctx);
         this.enemyBase.draw(ctx, true);
-
-        this.myBase.drawHealth(ctx);
-        this.enemyBase.drawHealth(ctx, true);
 
         if(app.main.host){
             this.myTurret.drawBullets(ctx);
@@ -493,10 +539,44 @@ app.game = {
         ctx.restore();
     },
 	drawUI: function(ctx) {
-        this.makeCharacterButton.draw(ctx); //draw the button used to make our character
-        this.makeRangedCharButton.draw(ctx);
-        this.makeSpeedCharButton.draw(ctx);
-        this.makeBigCharButton.draw(ctx);
+        var regOverride = false;
+        var speedOverride = false;
+        var rangeOverride = false;
+        var tankOverride = false;
+
+        if(this.myCurrency - this.charRegCost < 0) {regOverride = `btn_char_reg_disabled`;}
+        else if(this.makeCharacterButton.hover(true)){regOverride = `btn_char_reg_active`;}
+
+        if(this.myCurrency - this.charSpeedCost < 0) {speedOverride = `btn_char_speed_disabled`;}
+        else if(this.makeSpeedCharButton.hover(true)){speedOverride = `btn_char_speed_active`;}
+
+        if(this.myCurrency - this.charRangeCost < 0) {rangeOverride = `btn_char_range_disabled`;}
+        else if(this.makeRangedCharButton.hover(true)){rangeOverride = `btn_char_range_active`;}
+
+        if(this.myCurrency - this.charTankCost < 0) {tankOverride = `btn_char_tank_disabled`;}
+        else if(this.makeBigCharButton.hover(true)){tankOverride = `btn_char_tank_active`;}
+        
+        this.makeCharacterButton.draw(ctx, false, regOverride);
+        if(regOverride) this.regCostText.draw(ctx);
+        
+        this.makeSpeedCharButton.draw(ctx, false, speedOverride);
+        if(speedOverride) this.speedCostText.draw(ctx);
+
+        this.makeRangedCharButton.draw(ctx, false, rangeOverride);
+        if(rangeOverride) this.rangeCostText.draw(ctx);
+
+        this.makeBigCharButton.draw(ctx, false, tankOverride);
+        if(tankOverride) this.tankCostText.draw(ctx);
+
+        ctx.save();
+        ctx.scale(.521,.521);
+        ctx.drawImage(
+            document.getElementById('HUD'),
+            -14,-55
+        );
+        ctx.restore();
+        this.myBase.drawHealth(ctx);
+        this.enemyBase.drawHealth(ctx, true);
         this.currencyText.text = `${this.myCurrency}`;
         this.currencyText.draw(ctx);
 	}
