@@ -134,6 +134,7 @@ function joinServer(){
         app.game.myCharacters = lerpData(app.game.myCharacters,data.myCharacters);
         app.game.myBullets = lerpData(app.game.myBullets, data.myBullets);
         app.game.enemyBullets = lerpData(app.game.enemyBullets, data.enemyBullets);
+
         app.game.myTurret.rotation = lerp(app.game.myTurret.rotation, data.myTurretRotation, .2);
         app.game.enemyTurret.rotation = lerp(app.game.enemyTurret.rotation, data.enemyTurretRotation, .2);
 
@@ -199,16 +200,15 @@ function lerpData(myListArray, dataListArray) {
     var myList = myListArray;
     var dataList = dataListArray;
     for (var i = myList.length - 1; i >= 0; i--) {
-        const myObj = myList[i];
         var alreadyExists = false;
         //check if character exists in the data array
         for (var n = dataList.length - 1; n >= 0; n--) {
-            if (myObj.id === dataList[n].id) {
+            if (myList[i].id === dataList[n].id) {
                 alreadyExists = true;
 
                 myList[i].position.x = lerp(myList[i].position.x, dataList[n].position.x, .2);
                 myList[i].position.y = lerp(myList[i].position.y, dataList[n].position.y, .2);
-                myList[i].rotation= lerp(myList[i].rotation, dataList[n].rotation, .2);
+                myList[i].rotation = lerp(myList[i].rotation, dataList[n].rotation, .2);
 
                 //if this is a ranged character also lerp their bullets;
                 if(myList[i].ranged){

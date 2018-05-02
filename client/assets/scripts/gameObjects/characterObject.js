@@ -26,6 +26,7 @@ function characterObject(name, position, speed, health, damage, value, ranged, r
     this.fireTimer = 0;
     this.bullets = [];
     this.inRange = false;
+    this.id = `${Date.now()}`;
 }
 characterObject.prototype = Object.create(gameObject.prototype);
 characterObject.prototype.update = function (dt) {
