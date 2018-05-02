@@ -34,6 +34,7 @@ app.game = {
 
     baseCost: [0, 40, 60],
     baseLevelStats: [{}, {}, {},],
+    characterStats: [{},{},{}],
 
     regCostText: undefined,
     speedCostText: undefined,
@@ -107,6 +108,87 @@ app.game = {
             range: 650,
             damage: 9,
             fireRate: 1.5,
+        }
+        this.characterStats[0] = {
+            reg: {
+                health: 25,
+                damage: 10,
+                speed: 100,
+                value: 8
+            },
+            speed: {
+                health: 15,
+                damage: 15,
+                speed: 175,
+                value: 5
+            },
+            range: {
+                health: 15,
+                damage: 15,
+                speed: 100,
+                range: 200,
+                value: 12
+            },
+            tank: {
+                health: 80,
+                damage: 20,
+                speed: 60,
+                value: 25
+            }
+        }
+        this.characterStats[1] = {
+            reg: {
+                health: 30,
+                damage: 15,
+                speed: 100,
+                value: 9
+            },
+            speed: {
+                health: 20,
+                damage: 17,
+                speed: 200,
+                value: 7
+            },
+            range: {
+                health: 20,
+                damage: 15,
+                speed: 110,
+                range: 215,
+                value: 13
+            },
+            tank: {
+                health: 90,
+                damage: 23,
+                speed: 70,
+                value: 27
+            }
+        }
+        this.characterStats[2] = {
+            reg: {
+                health: 35,
+                damage: 17,
+                speed: 110,
+                value: 10
+            },
+            speed: {
+                health: 20,
+                damage: 20,
+                speed: 225,
+                value: 8
+            },
+            range: {
+                health: 22,
+                damage: 18,
+                speed: 120,
+                range: 230,
+                value: 15
+            },
+            tank: {
+                health: 100,
+                damage: 25,
+                speed: 75,
+                value: 30
+            }
         }
 
         //button stuff
@@ -314,10 +396,10 @@ app.game = {
                 this.myCharacters.push(new characterObject(
                     `reg?0${this.myBase.level}`,
                     charPos,
-                    100,
-                    25, //health
-                    10, //damage
-                    8,
+                    this.characterStats[this.myBase.level - 1].reg.speed,
+                    this.characterStats[this.myBase.level - 1].reg.health, //health
+                    this.characterStats[this.myBase.level - 1].reg.damage, //damage
+                    this.characterStats[this.myBase.level - 1].reg.value,
                     false,
                     0,
                     .521,
@@ -338,12 +420,12 @@ app.game = {
                 this.myCharacters.push(new characterObject(
                     `range?0${this.myBase.level}`,
                     charPos,
-                    100,
-                    15, //health
-                    15, //damage
-                    12,
+                    this.characterStats[this.myBase.level - 1].range.speed,
+                    this.characterStats[this.myBase.level - 1].range.health, //health
+                    this.characterStats[this.myBase.level - 1].range.damage, //damage
+                    this.characterStats[this.myBase.level - 1].range.value,
                     true,
-                    200,
+                    this.characterStats[this.myBase.level - 1].range.range,
                     .521,
                     1
                 ));
@@ -362,10 +444,10 @@ app.game = {
                 this.myCharacters.push(new characterObject(
                     `speed?0${this.myBase.level}`,
                     charPos,
-                    175,
-                    10, //health
-                    10, //damage
-                    5,
+                    this.characterStats[this.myBase.level - 1].speed.speed,
+                    this.characterStats[this.myBase.level - 1].speed.health, //health
+                    this.characterStats[this.myBase.level - 1].speed.damage, //damage
+                    this.characterStats[this.myBase.level - 1].speed.value,
                     false,
                     0,
                     .521,
@@ -386,10 +468,10 @@ app.game = {
                 this.myCharacters.push(new characterObject(
                     `tank?0${this.myBase.level}`,
                     charPos,
-                    60,
-                    80, //health
-                    20, //damage
-                    25,
+                    this.characterStats[this.myBase.level - 1].tank.speed,
+                    this.characterStats[this.myBase.level - 1].tank.health, //health
+                    this.characterStats[this.myBase.level - 1].tank.damage, //damage
+                    this.characterStats[this.myBase.level - 1].tank.value,
                     false,
                     0,
                     .521,

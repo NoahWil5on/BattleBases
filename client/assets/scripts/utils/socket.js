@@ -50,42 +50,43 @@ function joinServer(){
         }
     });
     socket.on('createNewEnemyForHost', (data) => {
+        var enemyStats = app.game.characterStats[app.game.enemyBase.level - 1];
         var img = `reg?0${app.game.enemyBase.level}`;
-        var health = 25;
-        var damage = 10;
-        var speed = 100;
-        var cost = 10;
-        var value = 8;
+        var health = enemyStats.reg.health;
+        var damage = enemyStats.reg.damage;
+        var speed = enemyStats.reg.speed;
+        var value = enemyStats.reg.value;
+        var cost = app.game.charRegCost;
         var ranged = false;
         var range = 0;
 
         //ranged
         if (data == 2) {
             img = `range?0${app.game.enemyBase.level}`;
-            health = 15;
-            damage = 15;
-            cost = 12;
-            speed = 100;
+            health = enemyStats.range.health;
+            damage = enemyStats.range.damage;
+            value = enemyStats.range.value;
+            speed = enemyStats.range.speed;
             cost = app.game.charRangeCost;
             ranged = true;
-            range = 200;
+            range = enemyStats.range.range;
         }//speed
         if (data == 3) {
             img = `speed?0${app.game.enemyBase.level}`;
-            health = 15;
-            damage = 15;
-            speed = 175;
-            value = 5;
+            health = enemyStats.speed.health;
+            damage = enemyStats.speed.damage;
+            speed = enemyStats.speed.speed;
+            value = enemyStats.speed.value;
             cost = app.game.charSpeedCost;
             var ranged = false;
             var range = 0;
         }//big boi
         if (data == 4) {
             img = `tank?0${app.game.enemyBase.level}`;
-            health = 80;
-            damage = 20;
-            speed = 60;
-            value = 25;
+            health = enemyStats.tank.health;
+            damage = enemyStats.tank.damage;
+            speed = enemyStats.tank.speed;
+            value = enemyStats.tank.value;
             cost = app.game.charTankCost;
             var ranged = false;
             var range = 0;
