@@ -71,7 +71,6 @@ characterObject.prototype.update = function (dt) {
     this.destPosition.x += (this.speed * this.direction) * dt;
 
     this.position.x = lerp(this.position.x, this.destPosition.x, .2);
-    console.log(this.position.x);
 }
 characterObject.prototype.drawBullets = function (ctx) {
     this.bullets.forEach(bullet => {

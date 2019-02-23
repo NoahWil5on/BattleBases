@@ -39,6 +39,7 @@ app.lobby = {
             toWrite = `${toWrite}.`
         }
         this.waiting.text = toWrite;
+        
         //draw background
         ctx.drawImage(this.background,-5,-30);
 		this.waiting.draw(ctx);

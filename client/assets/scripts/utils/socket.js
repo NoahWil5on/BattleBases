@@ -21,7 +21,6 @@ function joinServer(){
     });
     //do upgrade base and stats on host side
     socket.on('upgradeBase', () => {
-        console.log('here');
         if(app.game.enemyBase.level < 3 && app.game.enemyCurrency - app.game.baseCost[app.game.enemyBase.level] >= 0){
             app.game.enemyCurrency -= app.game.baseCost[app.game.enemyBase.level];
             app.game.enemyBase.level++;

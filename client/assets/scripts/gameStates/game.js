@@ -27,6 +27,7 @@ app.game = {
     upgradeBaseButton: undefined,
 
     currencyText: undefined,
+    incomeWait: .8,
     currencyCounter: 0,
 
     charRegCost: 10,
@@ -329,7 +330,7 @@ app.game = {
         this.updateButtons();
         if (app.main.host) {
             this.currencyCounter += dt;
-            if (this.currencyCounter > 1.5) {
+            if (this.currencyCounter > this.incomeWait) {
                 this.currencyCounter = 0;
                 this.myCurrency++;
                 this.enemyCurrency++;
@@ -340,8 +341,18 @@ app.game = {
             this.updateCharacters(dt);
             this.updateCollisions(dt);
             sendCharacterList();
+            this.checkOver();
         }
         this.draw(ctx);
+    },
+    //check if the game has reached the end condition
+    checkOver(){
+        if(this.enemyBase.health <= 0){
+            sendOver(false);
+        }
+        if(this.myBase.health <= 0){            
+            sendOver(true);
+        }
     },
     //called if host
     updateCharacters: function (dt) {
@@ -558,7 +569,7 @@ app.game = {
             }
         }
     },
-    //check player player collisions
+    //check player collisions
     checkPlayerCollisions: function (dt) {
         //reset collisions
         for (var i = this.myCharacters.length - 1; i >= 0; i--) {
@@ -594,14 +605,14 @@ app.game = {
                 if(HorizontalCollision(this.enemyBase, this.myCharacters[i].bullets[j])){
                     this.enemyBase.health -= this.myCharacters[i].bullets[j].damage;
                     this.myCharacters[i].bullets.splice(j, 1);
-                    if (this.enemyBase.health <= 0) {
-                        sendOver(false);
-                    }
+                    // if (this.enemyBase.health <= 0) {
+                    //     sendOver(false);
+                    // }
                     break;
                 }
             }
         }
-        //reset enemy collions
+        //reset enemy collisions
         for (var n = this.enemyCharacters.length - 1; n >= 0; n--) {
             this.enemyCharacters[n].isColliding = false;
             this.enemyCharacters[n].inRange = false;
@@ -636,9 +647,9 @@ app.game = {
                 if(HorizontalCollision(this.myBase, this.enemyCharacters[n].bullets[j])){
                     this.myBase.health -= this.enemyCharacters[n].bullets[j].damage;
                     this.enemyCharacters[n].bullets.splice(j, 1);
-                    if (this.myBase.health <= 0) {
-                        sendOver(true);
-                    }
+                    // if (this.myBase.health <= 0) {
+                    //     sendOver(true);
+                    // }
                     break;
                 }                
             }
@@ -701,9 +712,9 @@ app.game = {
                 }
 
                 //End game if players health drops below 0
-                if (this.enemyBase.health <= 0) {
-                    sendOver(false);
-                }
+                // if (this.enemyBase.health <= 0) {
+                //     sendOver(false);
+                // }
             }
         }
         for (var n = 0; n < this.enemyCharacters.length; n++) {
@@ -716,9 +727,9 @@ app.game = {
                 }
 
                 //End game if players health drops below 0
-                if (this.myBase.health <= 0) {
-                    sendOver(true);
-                }
+                // if (this.myBase.health <= 0) {
+                //     sendOver(true);
+                // }
             }
         }
     },

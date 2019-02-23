@@ -10,7 +10,6 @@ function getCharacter(character){
 }
 //parse to find specific button class type and state
 function getButton(button) {
-    console.log(button);
     var btnArray = button.split('?');
 
     if(btnArray.length < 3){
